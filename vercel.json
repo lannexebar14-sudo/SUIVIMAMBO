@@ -1,8 +1,4 @@
 {
   "framework": "nextjs",
-  "git": {
-    "deploymentEnabled": {
-      "mambo-quiz-entracte-20260921": false
-    }
-  }
+  "buildCommand": "echo 'Quiz branch - skip suivimambo' && exit 1"
 }
