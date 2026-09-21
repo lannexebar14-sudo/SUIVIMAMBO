@@ -478,9 +478,9 @@ updateTVClockNow=function(s,se){
 const _advanceGameBeforeCodeChallenge=advanceGame;
 advanceGame=async function(s){
   if(!s)return;
-  const se=await getSession(s);
   const now=serverNowIso();
   if(s.status==='running'&&s.phase==='reveal'&&secSince(s.reveal_started_at||s.phase_started_at)>=REVEAL){
+    const se=await getSession(s);
     const trigger=!!se?.challenge_enabled&&!se?.challenge_winner_id&&Number(se?.challenge_after_question)===(Number(s.question_index||0)+1)&&(Number(s.question_index||0)+1)<Number(se?.question_count||0);
     if(trigger){
       await patchState({phase:'code_challenge',phase_started_at:now,leaderboard_started_at:null,leaderboard_hidden:true,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.reveal');
