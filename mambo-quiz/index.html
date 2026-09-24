@@ -682,13 +682,16 @@ async function openMiniGamePicker(){
 function miniGameSelect(type){
   const x=mgInfo(type),box=document.querySelector('#mgOverlay .mgModal');
   if(!box)return;
-  const extra=type==='code_secret'
-    ? '<div class="label" style="margin-top:14px">CODE À CACHER</div><input id="mgCode" class="input" maxlength="20" placeholder="Ex. 5831"><div class="label" style="margin-top:12px">OÙ EST LE CODE ?</div><input id="mgLocation" class="input" maxlength="160" placeholder="Ex. Salle de jeux — sous la table">'
-    : '';
+  if(type!=='code_secret'){
+    queueMiniGame(type);
+    return;
+  }
   box.innerHTML='<div class="mgModalHead"><div><div class="label">MINI-JEU SÉLECTIONNÉ</div><h2>'+x.icon+' '+x.title+'</h2><p class="muted">'+x.desc+'</p></div><button class="btn alt" onclick="closeMiniGamePicker()">✕</button></div>'+
-    '<div class="box"><div class="label">POINTS À GAGNER</div><input id="mgPoints" class="input" type="number" min="1" max="5000" value="'+x.points+'">'+extra+
-    '<div class="mgStatus">Le jeu ne coupe jamais une question : il attendra automatiquement la fin de la question en cours ou de la prochaine question.</div>'+
-    '<div class="controls" style="margin-top:16px"><button class="btn alt" onclick="openMiniGamePicker()">← AUTRE JEU</button><button class="btn green" onclick="queueMiniGame(\''+type+'\')">PROGRAMMER CE JEU</button></div></div>';
+    '<div class="box"><div class="label">POINTS À GAGNER</div><input id="mgPoints" class="input" type="number" min="1" max="5000" value="'+x.points+'">'+
+    '<div class="label" style="margin-top:14px">CODE À CACHER</div><input id="mgCode" class="input" maxlength="20" placeholder="Ex. 5831">'+
+    '<div class="label" style="margin-top:12px">OÙ EST LE CODE ?</div><input id="mgLocation" class="input" maxlength="160" placeholder="Ex. Salle de jeux — sous la table">'+
+    '<div class="mgStatus">Le jeu ne coupe jamais une question : il attendra automatiquement la fin de la question en cours.</div>'+
+    '<div class="controls" style="margin-top:16px"><button class="btn alt" onclick="openMiniGamePicker()">← AUTRE JEU</button><button class="btn green" onclick="queueMiniGame(\''+type+'\')">PROGRAMMER LE CODE SECRET</button></div></div>';
 }
 async function queueMiniGame(type){
   if(miniGameBusy)return;
@@ -708,11 +711,13 @@ async function queueMiniGame(type){
 async function refreshMiniGameStaffStatus(){
   const el=document.getElementById('stMiniGameStatus');if(!el)return;
   const mg=await getMiniGame(null);
-  if(!mg){el.textContent='🎲 Aucun mini-jeu programmé';return}
+  if(!mg){el.textContent='🎲 Aucun mini-jeu lancé pour cette partie';return}
   const x=mgInfo(mg.game_type);
-  if(mg.status==='pending')el.textContent=x.icon+' '+x.title+' • programmé après la question '+mg.after_question;
-  else if(mg.status==='active')el.textContent=x.icon+' '+x.title+' • EN COURS';
-  else if(mg.status==='result')el.textContent=x.icon+' '+x.title+' • résultat affiché';
+  if(mg.status==='pending')el.textContent='🟣 '+x.title+' • PROGRAMMÉ APRÈS LA QUESTION '+mg.after_question;
+  else if(mg.status==='active')el.textContent='🟢 '+x.title+' • EN COURS';
+  else if(mg.status==='result')el.textContent='🟡 '+x.title+' • RÉSULTAT AFFICHÉ';
+  else if(mg.status==='finished')el.textContent='✅ DERNIER MINI-JEU : '+x.title+' • TERMINÉ APRÈS LA QUESTION '+mg.after_question;
+  else el.textContent=x.icon+' '+x.title+' • '+String(mg.status||'').toUpperCase();
 }
 async function miniGameAction(value){
   if(miniGameBusy)return;
