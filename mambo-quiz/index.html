@@ -74,7 +74,7 @@ body{min-height:100svh!important;min-height:100dvh!important}
 </style></head><body><div id="app"><div class="page hero"><div><div class="big">LE MAMBO</div><p>Connexion au Grand Quiz…</p></div></div></div>
 <script>
 const app=document.getElementById('app');
-const APP_BUILD='20260924-minigames-v4';
+const APP_BUILD='20260924-minigames-v5';
 const SB='https://otgubsvmcbaocrndngrq.supabase.co/rest/v1/';
 const KEY='sb_publishable__d50uWZVhfLcfzHv70ZOSA_QySE92AW';
 const _qpMode=new URLSearchParams(location.search).get('mode'),_cookiePlayer=(('; '+document.cookie).split('; mambo_player=')[1]||'').split(';')[0],_cookieDevice=(('; '+document.cookie).split('; mambo_device=')[1]||'').split(';')[0],_savedPlayer=localStorage.getItem('mambo_player')||_cookiePlayer,_savedDevice=localStorage.getItem('mambo_device')||_cookieDevice;const mode=_qpMode||(location.pathname.startsWith('/play')?'play':location.pathname.startsWith('/staff')?'staff':((_savedPlayer||_savedDevice)?'play':'tv'));
@@ -762,11 +762,14 @@ function renderMiniGameTV(s,mg){
     const wait=mgLeft(mg.go_at)>0;
     body='<div id="mgTvGo" class="winner-glow" style="margin:22px auto">'+(wait?'ATTENDS…':'GO !')+'</div><div id="mgTvTimer" class="timer">'+mgFmt(wait?mgLeft(mg.go_at):mgLeft(mg.ends_at))+'</div><p class="muted">'+(mg.game_type==='red_button'?'Le premier joueur qui appuie sur son téléphone gagne.':'Appuie dès que GO apparaît. Le meilleur temps gagne.')+'</p>';
   }else if(mg.game_type==='survive'){
-    body='<div class="mgTvChoices"><div class="mgTvChoice">⬅️ GAUCHE</div><div class="mgTvChoice">➡️ DROITE</div></div><div id="mgTvTimer" class="timer">'+mgFmt(mgLeft(mg.ends_at))+'</div>';
+    const wait=mgLeft(mg.go_at)>0;
+    body=wait?'<div class="winner-glow" style="margin:22px auto">PRÉPAREZ-VOUS…</div><div id="mgTvTimer" class="timer">'+mgFmt(mgLeft(mg.go_at))+'</div>':'<div class="mgTvChoices"><div class="mgTvChoice">⬅️ GAUCHE</div><div class="mgTvChoice">➡️ DROITE</div></div><div id="mgTvTimer" class="timer">'+mgFmt(mgLeft(mg.ends_at))+'</div>';
   }else if(mg.game_type==='minority'){
-    body='<p style="font-size:24px;font-weight:900">Choisis le symbole que les autres choisiront le moins.</p><div class="mgTvChoices mgTvSymbols"><div class="mgTvChoice">🔺</div><div class="mgTvChoice">⚡</div><div class="mgTvChoice">🌙</div><div class="mgTvChoice">💎</div></div><div id="mgTvTimer" class="timer">'+mgFmt(mgLeft(mg.ends_at))+'</div>';
+    const wait=mgLeft(mg.go_at)>0;
+    body=wait?'<div class="winner-glow" style="margin:22px auto">PRÉPAREZ-VOUS…</div><div id="mgTvTimer" class="timer">'+mgFmt(mgLeft(mg.go_at))+'</div>':'<p style="font-size:24px;font-weight:900">Choisis le symbole que les autres choisiront le moins.</p><div class="mgTvChoices mgTvSymbols"><div class="mgTvChoice">🔺</div><div class="mgTvChoice">⚡</div><div class="mgTvChoice">🌙</div><div class="mgTvChoice">💎</div></div><div id="mgTvTimer" class="timer">'+mgFmt(mgLeft(mg.ends_at))+'</div>';
   }else if(mg.game_type==='coin'){
-    body='<div class="mgTvChoices"><div class="mgTvChoice">🪙 PILE</div><div class="mgTvChoice">✨ FACE</div></div><div id="mgTvTimer" class="timer">'+mgFmt(mgLeft(mg.ends_at))+'</div>';
+    const wait=mgLeft(mg.go_at)>0;
+    body=wait?'<div class="winner-glow" style="margin:22px auto">PRÉPAREZ-VOUS…</div><div id="mgTvTimer" class="timer">'+mgFmt(mgLeft(mg.go_at))+'</div>':'<div class="mgTvChoices"><div class="mgTvChoice">🪙 PILE</div><div class="mgTvChoice">✨ FACE</div></div><div id="mgTvTimer" class="timer">'+mgFmt(mgLeft(mg.ends_at))+'</div>';
   }else{
     const loc=mg.public_data?.location||'Dans le Mambo';
     body='<div class="codeChallengeLocation">'+esc(loc)+'</div><p style="font-size:22px;font-weight:900">Trouve le code et saisis-le sur ton téléphone.</p><div id="mgTvTimer" class="timer">'+formatChallengeTime(mgLeft(mg.ends_at))+'</div>';
