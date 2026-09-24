@@ -238,10 +238,153 @@ body{min-height:100svh!important;min-height:100dvh!important}
   }
 }
 
+/* V10.2 — TV calibration for real browser viewport */
+.tvQuestionPage{
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:100dvh!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  padding:8px 14px 96px!important;
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+  gap:3px!important;
+}
+.tvQuestionPage .top{
+  min-height:30px!important;
+  height:auto!important;
+  margin:0 auto!important;
+  width:100%!important;
+  max-width:1500px!important;
+}
+.tvQuestionPage .top .brand{
+  font-size:clamp(11px,1.15vw,18px)!important;
+}
+.tvQuestionPage .top .pill{
+  padding:6px 10px!important;
+  font-size:clamp(10px,1.05vw,15px)!important;
+}
+.tvQuestionPage>div:nth-child(2){
+  min-height:0!important;
+  height:100%!important;
+  display:grid!important;
+  grid-template-rows:auto auto auto minmax(0,1fr)!important;
+  align-content:stretch!important;
+  justify-items:center!important;
+  overflow:hidden!important;
+}
+.tvQuestionPage .chronoTV{
+  --size:clamp(66px,11vh,98px)!important;
+  font-size:clamp(28px,5vh,42px)!important;
+  margin:2px auto!important;
+}
+.tvQuestionPage .questionText{
+  width:min(1450px,96vw)!important;
+  max-width:1450px!important;
+  font-size:clamp(20px,4.2vh,38px)!important;
+  line-height:1.03!important;
+  margin:2px auto 7px!important;
+  padding:0 8px!important;
+  max-height:18vh!important;
+  overflow:hidden!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+.tvQuestionPage .answers{
+  width:min(1520px,97vw)!important;
+  max-width:1520px!important;
+  height:100%!important;
+  max-height:38vh!important;
+  min-height:0!important;
+  margin:3px auto 0!important;
+  padding:0 8px!important;
+  gap:8px!important;
+  box-sizing:border-box!important;
+  align-self:stretch!important;
+}
+.tvQuestionPage .answers.tvAnswersCount4,
+.tvQuestionPage .answers.tvAnswersCount3{
+  grid-template-columns:1fr 1fr!important;
+  grid-template-rows:repeat(2,minmax(0,1fr))!important;
+}
+.tvQuestionPage .answers.tvAnswersCount2{
+  grid-template-columns:1fr 1fr!important;
+  grid-template-rows:minmax(0,1fr)!important;
+  max-height:22vh!important;
+  align-self:center!important;
+}
+.tvQuestionPage .answers.tvAnswersCount1{
+  grid-template-columns:1fr!important;
+  grid-template-rows:minmax(0,1fr)!important;
+  max-height:20vh!important;
+  align-self:center!important;
+}
+.tvQuestionPage .answer{
+  min-height:0!important;
+  height:100%!important;
+  max-height:none!important;
+  padding:8px 12px!important;
+  border-radius:18px!important;
+  font-size:clamp(17px,3.4vh,31px)!important;
+  line-height:1.05!important;
+  overflow:hidden!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  overflow-wrap:anywhere!important;
+}
+
+/* Keep QR + progress readable without covering the answers. */
+.quizProgressWrap{
+  bottom:72px!important;
+  width:min(700px,58vw)!important;
+}
+.quizProgressLabel{
+  font-size:10px!important;
+  margin-bottom:3px!important;
+}
+.quizProgressTrack{height:6px!important}
+.tvJoinBar{
+  bottom:5px!important;
+  padding:5px 9px 5px 5px!important;
+  gap:8px!important;
+  border-radius:14px!important;
+}
+.tvJoinBar img{width:44px!important;height:44px!important}
+.tvJoinCode{font-size:24px!important}
+.tvJoinLabel,.tvJoinHint{font-size:8px!important}
+
+/* Laptop / browser with tabs visible: prioritise fitting everything on one screen. */
+@media(max-height:820px) and (min-width:761px){
+  .tvQuestionPage{padding-top:5px!important;padding-bottom:84px!important}
+  .tvQuestionPage .top{min-height:24px!important}
+  .tvQuestionPage .chronoTV{--size:64px!important;font-size:27px!important;margin:1px auto!important}
+  .tvQuestionPage .questionText{font-size:clamp(18px,3.7vh,30px)!important;max-height:15vh!important;margin:1px auto 4px!important}
+  .tvQuestionPage .answers{max-height:36vh!important;gap:6px!important}
+  .tvQuestionPage .answers.tvAnswersCount2{max-height:19vh!important}
+  .tvQuestionPage .answer{font-size:clamp(15px,3vh,24px)!important;padding:6px 10px!important;border-radius:14px!important}
+  .quizProgressWrap{bottom:61px!important;width:min(620px,54vw)!important}
+  .tvJoinBar img{width:38px!important;height:38px!important}
+  .tvJoinCode{font-size:21px!important}
+}
+@media(max-height:650px) and (min-width:761px){
+  .tvQuestionPage{padding-bottom:72px!important}
+  .tvQuestionPage .chronoTV{--size:54px!important;font-size:23px!important}
+  .tvQuestionPage .questionText{font-size:clamp(16px,3.4vh,25px)!important;max-height:13vh!important}
+  .tvQuestionPage .answers{max-height:34vh!important}
+  .tvQuestionPage .answers.tvAnswersCount2{max-height:17vh!important}
+  .tvQuestionPage .answer{font-size:clamp(14px,2.8vh,21px)!important}
+  .quizProgressWrap{bottom:54px!important}
+  .tvJoinBar img{width:34px!important;height:34px!important}
+  .tvJoinCode{font-size:18px!important}
+}
+
 </style></head><body><div id="app"><div class="page hero"><div><div class="big">LE MAMBO</div><p>Connexion au Grand Quiz…</p></div></div></div>
 <script>
 const app=document.getElementById('app');
-const APP_BUILD='20260924-quiz-v10.1';
+const APP_BUILD='20260924-quiz-v10.2';
 const SB='https://otgubsvmcbaocrndngrq.supabase.co/rest/v1/';
 const KEY='sb_publishable__d50uWZVhfLcfzHv70ZOSA_QySE92AW';
 const _qpMode=new URLSearchParams(location.search).get('mode'),_cookiePlayer=(('; '+document.cookie).split('; mambo_player=')[1]||'').split(';')[0],_cookieDevice=(('; '+document.cookie).split('; mambo_device=')[1]||'').split(';')[0],_savedPlayer=localStorage.getItem('mambo_player')||_cookiePlayer,_savedDevice=localStorage.getItem('mambo_device')||_cookieDevice;const mode=_qpMode||(location.pathname.startsWith('/play')?'play':location.pathname.startsWith('/staff')?'staff':((_savedPlayer||_savedDevice)?'play':'tv'));
@@ -465,7 +608,7 @@ async function personalQuizStats(s,p){
   }catch(e){return{correct:0,total:0,longest:0,fast:null}}
 }
 let tvKey='',tvTimer=null,tvPoll=null,busyAdvance=false;
-async function renderTV(s){const se=await getSession(s),q=await getQuestion(s),phase=s.phase||'lobby',qstats=phase==='reveal'?await questionStats(s):null;let html='';if(['lobby','waiting','stopped'].includes(phase)||s.status==='waiting'){await loadTvSlides(false);html=tvLobby(s);}else if(phase==='intermission')html=`<div class="page hero"><div><div class="brand">LE MAMBO • GRAND QUIZ</div><h1 class="big">ENTRACTE</h1><div id="tvBreak" class="mega" style="font-size:clamp(70px,14vw,180px)">${formatBreakTime(breakSecondsLeft(s))}</div><p class="muted">Le quiz reprend automatiquement à la fin du compte à rebours.</p></div></div>`;else if(phase==='countdown')html=`<div class="page hero"><div style="width:min(1100px,94vw)"><div class="brand">LE MAMBO • GRAND QUIZ</div><h1 style="margin:18px 0 8px">PROCHAINE QUESTION</h1><div id="tvCount" class="mega">${COUNTDOWN}</div><div style="font-size:clamp(26px,3.2vw,48px);font-weight:1000;margin:14px auto 16px;line-height:1;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis">${esc(q?.category||'QUESTION SURPRISE')}</div><p>Question ${(s.question_index||0)+1} / ${se?.question_count||0}</p></div></div>`;else if(phase==='question'&&q)html=`<div class="page tvQuestionPage"><div class="top"><div class="brand">LE MAMBO • GRAND QUIZ</div><div class="pill">QUESTION ${(s.question_index||0)+1}/${se?.question_count||0}</div></div><div style="text-align:center"><div id="tvTime" class="timer">${se?.question_duration||60}</div>${specialBadge(q)}<div class="questionText">${esc(q.question)}</div><div class="answers">${(q.answers||[]).map((a,i)=>`<div class="answer">${i+1}. ${esc(a)}</div>`).join('')}</div></div></div>`;else if(phase==='reveal'&&q)html=`<div class="page hero revealTVPage"><div style="width:100%;text-align:center"><div class="brand">BONNE RÉPONSE</div><div class="winner-glow" style="margin:18px auto">✅ ${esc(correctText(q))}</div>${answerStatHtml(qstats)}<div class="questionText" style="font-size:clamp(20px,3vw,42px)">${esc(q.question)}</div><div class="answers">${(q.answers||[]).map((a,i)=>`<div class="answer ${correctSet(q).includes(i)?'correct':''}">${i+1}. ${esc(a)}</div>`).join('')}</div></div></div>`;else if(phase==='leaderboard'&&s.leaderboard_hidden)html=`<div class="page hero"><div><div class="brand">LE MAMBO • GRAND QUIZ</div><h1>PROCHAINE QUESTION</h1><div id="tvBetween" class="timer">0</div><p class="muted">Classement toutes les 5 questions.</p></div></div>`;else if(phase==='leaderboard'){const rows=await leaderboard(s,10);html=`<div class="page"><div class="top"><div class="brand">LE MAMBO • GRAND QUIZ</div><div class="pill">CLASSEMENT</div></div><div style="text-align:center"><div class="big" style="margin-top:18px">CLASSEMENT</div>${renderPodium(rows)}<div class="tv-ranks">${rows.slice(3,10).map((p,i)=>`<div class="tv-rank" style="animation-delay:${i*.05}s"><div class="n">#${i+4}</div><div class="name"><span class="avatar-inline">${avatarOf(p)}</span>${esc(p.nickname)}</div><div class="pts">${p.score||0} pts</div></div>`).join('')}</div><div style="margin-top:18px"><div class="label">PROCHAINE QUESTION DANS</div><div id="tvBetween" class="timer">0</div></div></div></div>`}else if(phase==='final'||s.status==='finished'){const rows=await leaderboard(s,10),w=rows[0];html=`<div class="page"><div class="top"><div class="brand">LE MAMBO • GRAND QUIZ</div><div class="pill">RÉSULTATS</div></div><div style="text-align:center"><div class="winner-glow" style="margin-top:26px">🏆 ${w?avatarOf(w)+' '+esc(w.nickname):'FIN DU QUIZ'}</div>${w?`<div class="podscore">${w.score||0} POINTS</div>`:''}${renderPodium(rows)}${renderPrizes(se,rows)}<div class="tv-ranks">${rows.slice(3,8).map((p,i)=>`<div class="tv-rank"><div class="n">#${i+4}</div><div class="name"><span class="avatar-inline">${avatarOf(p)}</span>${esc(p.nickname)}</div><div class="pts">${p.score||0} pts</div></div>`).join('')}</div></div></div>`}else html=tvLobby(s);const showJoinBar=s.status==='running'&&!['lobby','waiting','stopped','final'].includes(phase);if(showJoinBar)html+=tvJoinFooter(s);app.innerHTML=html;startTVClock(s,se);startTvSlideshow(s)}
+async function renderTV(s){const se=await getSession(s),q=await getQuestion(s),phase=s.phase||'lobby',qstats=phase==='reveal'?await questionStats(s):null;let html='';if(['lobby','waiting','stopped'].includes(phase)||s.status==='waiting'){await loadTvSlides(false);html=tvLobby(s);}else if(phase==='intermission')html=`<div class="page hero"><div><div class="brand">LE MAMBO • GRAND QUIZ</div><h1 class="big">ENTRACTE</h1><div id="tvBreak" class="mega" style="font-size:clamp(70px,14vw,180px)">${formatBreakTime(breakSecondsLeft(s))}</div><p class="muted">Le quiz reprend automatiquement à la fin du compte à rebours.</p></div></div>`;else if(phase==='countdown')html=`<div class="page hero"><div style="width:min(1100px,94vw)"><div class="brand">LE MAMBO • GRAND QUIZ</div><h1 style="margin:18px 0 8px">PROCHAINE QUESTION</h1><div id="tvCount" class="mega">${COUNTDOWN}</div><div style="font-size:clamp(26px,3.2vw,48px);font-weight:1000;margin:14px auto 16px;line-height:1;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis">${esc(q?.category||'QUESTION SURPRISE')}</div><p>Question ${(s.question_index||0)+1} / ${se?.question_count||0}</p></div></div>`;else if(phase==='question'&&q)html=`<div class="page tvQuestionPage"><div class="top"><div class="brand">LE MAMBO • GRAND QUIZ</div><div class="pill">QUESTION ${(s.question_index||0)+1}/${se?.question_count||0}</div></div><div style="text-align:center"><div id="tvTime" class="timer">${se?.question_duration||60}</div>${specialBadge(q)}<div class="questionText">${esc(q.question)}</div><div class="answers tvAnswersCount${Math.min(4,(q.answers||[]).length)}">${(q.answers||[]).map((a,i)=>`<div class="answer">${i+1}. ${esc(a)}</div>`).join('')}</div></div></div>`;else if(phase==='reveal'&&q)html=`<div class="page hero revealTVPage"><div style="width:100%;text-align:center"><div class="brand">BONNE RÉPONSE</div><div class="winner-glow" style="margin:18px auto">✅ ${esc(correctText(q))}</div>${answerStatHtml(qstats)}<div class="questionText" style="font-size:clamp(20px,3vw,42px)">${esc(q.question)}</div><div class="answers tvAnswersCount${Math.min(4,(q.answers||[]).length)}">${(q.answers||[]).map((a,i)=>`<div class="answer ${correctSet(q).includes(i)?'correct':''}">${i+1}. ${esc(a)}</div>`).join('')}</div></div></div>`;else if(phase==='leaderboard'&&s.leaderboard_hidden)html=`<div class="page hero"><div><div class="brand">LE MAMBO • GRAND QUIZ</div><h1>PROCHAINE QUESTION</h1><div id="tvBetween" class="timer">0</div><p class="muted">Classement toutes les 5 questions.</p></div></div>`;else if(phase==='leaderboard'){const rows=await leaderboard(s,10);html=`<div class="page"><div class="top"><div class="brand">LE MAMBO • GRAND QUIZ</div><div class="pill">CLASSEMENT</div></div><div style="text-align:center"><div class="big" style="margin-top:18px">CLASSEMENT</div>${renderPodium(rows)}<div class="tv-ranks">${rows.slice(3,10).map((p,i)=>`<div class="tv-rank" style="animation-delay:${i*.05}s"><div class="n">#${i+4}</div><div class="name"><span class="avatar-inline">${avatarOf(p)}</span>${esc(p.nickname)}</div><div class="pts">${p.score||0} pts</div></div>`).join('')}</div><div style="margin-top:18px"><div class="label">PROCHAINE QUESTION DANS</div><div id="tvBetween" class="timer">0</div></div></div></div>`}else if(phase==='final'||s.status==='finished'){const rows=await leaderboard(s,10),w=rows[0];html=`<div class="page"><div class="top"><div class="brand">LE MAMBO • GRAND QUIZ</div><div class="pill">RÉSULTATS</div></div><div style="text-align:center"><div class="winner-glow" style="margin-top:26px">🏆 ${w?avatarOf(w)+' '+esc(w.nickname):'FIN DU QUIZ'}</div>${w?`<div class="podscore">${w.score||0} POINTS</div>`:''}${renderPodium(rows)}${renderPrizes(se,rows)}<div class="tv-ranks">${rows.slice(3,8).map((p,i)=>`<div class="tv-rank"><div class="n">#${i+4}</div><div class="name"><span class="avatar-inline">${avatarOf(p)}</span>${esc(p.nickname)}</div><div class="pts">${p.score||0} pts</div></div>`).join('')}</div></div></div>`}else html=tvLobby(s);const showJoinBar=s.status==='running'&&!['lobby','waiting','stopped','final'].includes(phase);if(showJoinBar)html+=tvJoinFooter(s);app.innerHTML=html;startTVClock(s,se);startTvSlideshow(s)}
 function setRoundTimer(id,left,total,size='phone'){const e=document.getElementById(id);if(!e)return;left=Math.max(0,Math.ceil(Number(left)||0));total=Math.max(1,Number(total)||1);e.textContent=left;e.classList.add('chronoRing');e.classList.toggle('chronoTV',size==='tv');e.classList.toggle('chronoPhone',size==='phone');e.classList.toggle('chronoMini',size==='mini');const pct=Math.min(100,Math.max(0,(1-left/total)*100)),warn=Math.max(6,Math.min(10,Math.ceil(total/3))),color=left<=5?'#ff3b5c':left<=warn?'#ff9f1a':'#7c4dff';e.style.setProperty('--p',pct+'%');e.style.setProperty('--ring',color);e.style.boxShadow='0 0 34px '+(left<=5?'#ff3b5c66':left<=warn?'#ff9f1a55':'#7c4dff55')+',inset 0 0 18px #0008';e.classList.toggle('danger',left>0&&left<=5)}function updateTVClockNow(s,se){if(s.phase==='intermission'){const e=document.getElementById('tvBreak');if(e)e.textContent=formatBreakTime(breakSecondsLeft(s))}if(s.phase==='countdown'){const left=Math.max(0,COUNTDOWN-secSince(s.countdown_started_at||s.phase_started_at));setRoundTimer('tvCount',left,COUNTDOWN,'tv')}if(s.phase==='question'){const total=se?.question_duration||60,left=Math.max(0,total-secSince(s.question_started_at));setRoundTimer('tvTime',left,total,'tv')}if(s.phase==='leaderboard'){const e=document.getElementById('tvBetween');if(e){const between=Math.max(0,Number(se?.between_question_duration??10));e.textContent=Math.max(0,Math.ceil(between-secSince(s.leaderboard_started_at||s.phase_started_at)))}}}function startTVClock(s,se){clearInterval(tvTimer);updateTVClockNow(s,se);tvTimer=setInterval(()=>updateTVClockNow(s,se),200)}
 async function advanceGame(s){if(busyAdvance)return;busyAdvance=true;try{const se=await getSession(s),duration=se?.question_duration||60,between=Math.max(0,Number(se?.between_question_duration??10)),revealDelay=REVEAL,leaderboardDelay=between,now=serverNowIso();if(s.phase==='intermission'){const total=Math.max(0,Number(s.paused_remaining||0));if(total<=0||secSince(s.paused_at||s.phase_started_at)>=total){const resumeSame=s.paused_phase==='resume_same',last=(s.question_index||0)+1>=(se?.question_count||0);if(resumeSame)await patchState({phase:'countdown',countdown_started_at:now,question_started_at:null,reveal_started_at:null,leaderboard_started_at:null,leaderboard_hidden:false,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.intermission');else if(last)await patchState({phase:'leaderboard',leaderboard_started_at:now,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.intermission');else await patchState({question_index:(s.question_index||0)+1,phase:'countdown',countdown_started_at:now,question_started_at:null,reveal_started_at:null,leaderboard_started_at:null,leaderboard_hidden:false,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.intermission')}return}if(s.phase==='countdown'&&secSince(s.countdown_started_at||s.phase_started_at)>=COUNTDOWN)await patchState({phase:'question',question_started_at:now,phase_started_at:now},'&phase=eq.countdown');else if(s.phase==='question'&&secSince(s.question_started_at)>=duration){await rpc('mambo_quiz_finalize_question',{p_question:s.question_index});await patchState({phase:'reveal',reveal_started_at:now,phase_started_at:now},'&phase=eq.question')}else if(s.phase==='reveal'&&secSince(s.reveal_started_at||s.phase_started_at)>=revealDelay){const showBoard=(((s.question_index||0)+1)%5===0)||(((s.question_index||0)+1)>=(se?.question_count||0));await patchState({phase:'leaderboard',leaderboard_hidden:!showBoard,leaderboard_started_at:now,phase_started_at:now},'&phase=eq.reveal');}else if(s.phase==='leaderboard'&&secSince(s.leaderboard_started_at||s.phase_started_at)>=leaderboardDelay){const last=(s.question_index||0)+1>=(se?.question_count||0);if(last){if(!s.speed_bonus_applied){await rpc('mambo_quiz_apply_speed_bonus',{p_session:s.current_session_id});await patchState({speed_bonus_applied:true,speed_bonus_started_at:now},'&phase=eq.leaderboard')}const rows=await leaderboard(s,2),winner=rows[0]?.id||null;await patchState({status:'finished',phase:'final',final_started_at:now,phase_started_at:now,winner_id:winner},'&phase=eq.leaderboard');await db(`mambo_quiz_sessions?id=eq.${s.current_session_id}`,{method:'PATCH',body:{status:'finished',finished_at:now,winner_player_id:winner}})}else if(s.paused_phase==='pending_break'&&Number(s.paused_remaining)>0)await patchState({phase:'intermission',paused_phase:'resume_increment',paused_at:now,phase_started_at:now,leaderboard_hidden:false},'&phase=eq.leaderboard');else await patchState({question_index:(s.question_index||0)+1,phase:'countdown',countdown_started_at:now,question_started_at:null,reveal_started_at:null,leaderboard_started_at:null,leaderboard_hidden:false,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.leaderboard')}}catch(e){console.error(e)}finally{busyAdvance=false}}
 async function tvTick(){try{let s=await getState();if(!s)return;const seen=[s.phase,s.question_index,s.status,s.current_session_id].join('|');if(seen!==tvKey){tvKey=seen;await renderTV(s);return}if(['lobby','waiting','stopped'].includes(s.phase)||s.status==='waiting'){const changed=await loadTvSlides(false);if(changed){tvSlideIndex=0;await renderTV(s);return}}await advanceGame(s);s=await getState();const key=[s.phase,s.question_index,s.status,s.current_session_id].join('|');if(key!==tvKey){tvKey=key;await renderTV(s)}else{const se=await getSession(s);updateTVClockNow(s,se)}}catch(e){console.error(e)}}async function tv(){await tvTick();tvPoll=setInterval(tvTick,750)}
