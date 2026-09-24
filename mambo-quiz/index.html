@@ -116,10 +116,132 @@ body{min-height:100svh!important;min-height:100dvh!important}
 .phoneRecapGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}.phoneRecapStat{background:#ffffff0a;border:1px solid #ffffff16;border-radius:14px;padding:11px}.phoneRecapStat b{display:block;font-size:24px}.phoneRecapStat span{font-size:10px;color:#aaa6bd;font-weight:900}
 @media(max-width:760px){.quizProgressWrap{display:none}.recapStats{grid-template-columns:1fr 1fr}.recapTop3{gap:6px}.recapTop{padding:8px}.recapWrap,.finalV10Wrap{height:auto;min-height:100dvh}}
 
+/* V10.1 — calibration iPhone / mobile */
+@media(max-width:760px){
+  .playerHud{
+    top:calc(env(safe-area-inset-top,0px) + 4px)!important;
+    width:calc(100vw - 12px)!important;
+    max-width:548px!important;
+    padding:5px 6px 4px!important;
+    border-radius:14px!important;
+  }
+  .playerHudTop{gap:4px!important}
+  .playerHudItem{
+    padding:5px 3px!important;
+    border-radius:10px!important;
+    min-height:0!important;
+  }
+  .playerHudItem b{
+    font-size:clamp(15px,4.6vw,19px)!important;
+    line-height:1!important;
+  }
+  .playerHudItem span{
+    display:none!important;
+  }
+  .playerHudProgress{
+    height:3px!important;
+    margin-top:4px!important;
+  }
+  .playerHudMove{
+    font-size:9px!important;
+    line-height:1!important;
+    margin-top:3px!important;
+  }
+
+  .phone.withHud{
+    padding-top:calc(env(safe-area-inset-top,0px) + 62px)!important;
+  }
+  .phoneQuestionPage.withHud{
+    min-height:100dvh!important;
+    height:auto!important;
+    padding:
+      calc(env(safe-area-inset-top,0px) + 62px)
+      max(8px,env(safe-area-inset-right))
+      calc(env(safe-area-inset-bottom,0px) + 14px)
+      max(8px,env(safe-area-inset-left))!important;
+    overflow-y:auto!important;
+  }
+  .phoneQuestionPage>.box,
+  .phoneQuestionPage .box{
+    width:100%!important;
+    min-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 82px)!important;
+    margin:0 auto!important;
+    padding:11px 12px!important;
+    border-radius:18px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:flex-start!important;
+    box-sizing:border-box!important;
+  }
+  .phoneQuestionPage .top{
+    min-height:24px!important;
+    margin:0 0 4px!important;
+    padding:0 2px!important;
+    align-items:center!important;
+  }
+  .phoneQuestionPage .top b{
+    font-size:12px!important;
+    line-height:1!important;
+  }
+  .phoneQuestionPage h2{
+    font-size:clamp(19px,5.4vw,25px)!important;
+    line-height:1.08!important;
+    margin:5px 2px 9px!important;
+    letter-spacing:0!important;
+  }
+  .phoneQuestionPage .phoneAnswers{
+    flex:1 1 auto!important;
+    width:100%!important;
+    margin:6px 0 0!important;
+    gap:8px!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    grid-template-rows:repeat(4,minmax(58px,1fr))!important;
+    max-height:58dvh!important;
+  }
+  .phoneQuestionPage .phoneAnswer{
+    min-height:58px!important;
+    max-height:105px!important;
+    padding:10px 11px!important;
+    border-radius:16px!important;
+    font-size:clamp(15px,4.35vw,19px)!important;
+    line-height:1.12!important;
+  }
+  .phoneQuestionPage .savedChoices{
+    flex:1 1 auto!important;
+    display:grid!important;
+    grid-template-rows:repeat(4,minmax(50px,1fr))!important;
+    gap:7px!important;
+    margin:6px 0 0!important;
+    max-height:55dvh!important;
+  }
+  .phoneQuestionPage .savedChoice{
+    min-height:50px!important;
+    padding:9px 10px!important;
+    border-radius:14px!important;
+    font-size:clamp(14px,4vw,18px)!important;
+  }
+
+  /* Other player screens stay centered without the huge V10 top offset. */
+  .phone.withHud:not(.phoneQuestionPage){
+    padding-top:calc(env(safe-area-inset-top,0px) + 62px)!important;
+    padding-bottom:calc(env(safe-area-inset-bottom,0px) + 14px)!important;
+  }
+
+  /* Small-height phones */
+  @media(max-height:720px){
+    .phoneQuestionPage h2{font-size:18px!important;margin:3px 0 6px!important}
+    .phoneQuestionPage .phoneAnswers{gap:6px!important;max-height:54dvh!important}
+    .phoneQuestionPage .phoneAnswer{min-height:50px!important;padding:8px 9px!important;font-size:14px!important}
+    .playerHud{padding:4px 5px!important}
+    .phone.withHud,.phoneQuestionPage.withHud{padding-top:calc(env(safe-area-inset-top,0px) + 56px)!important}
+  }
+}
+
 </style></head><body><div id="app"><div class="page hero"><div><div class="big">LE MAMBO</div><p>Connexion au Grand Quiz…</p></div></div></div>
 <script>
 const app=document.getElementById('app');
-const APP_BUILD='20260924-quiz-v10';
+const APP_BUILD='20260924-quiz-v10.1';
 const SB='https://otgubsvmcbaocrndngrq.supabase.co/rest/v1/';
 const KEY='sb_publishable__d50uWZVhfLcfzHv70ZOSA_QySE92AW';
 const _qpMode=new URLSearchParams(location.search).get('mode'),_cookiePlayer=(('; '+document.cookie).split('; mambo_player=')[1]||'').split(';')[0],_cookieDevice=(('; '+document.cookie).split('; mambo_device=')[1]||'').split(';')[0],_savedPlayer=localStorage.getItem('mambo_player')||_cookiePlayer,_savedDevice=localStorage.getItem('mambo_device')||_cookieDevice;const mode=_qpMode||(location.pathname.startsWith('/play')?'play':location.pathname.startsWith('/staff')?'staff':((_savedPlayer||_savedDevice)?'play':'tv'));
