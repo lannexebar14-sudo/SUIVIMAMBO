@@ -74,6 +74,7 @@ body{min-height:100svh!important;min-height:100dvh!important}
 </style></head><body><div id="app"><div class="page hero"><div><div class="big">LE MAMBO</div><p>Connexion au Grand Quiz…</p></div></div></div>
 <script>
 const app=document.getElementById('app');
+const APP_BUILD='20260924-minigames-v4';
 const SB='https://otgubsvmcbaocrndngrq.supabase.co/rest/v1/';
 const KEY='sb_publishable__d50uWZVhfLcfzHv70ZOSA_QySE92AW';
 const _qpMode=new URLSearchParams(location.search).get('mode'),_cookiePlayer=(('; '+document.cookie).split('; mambo_player=')[1]||'').split(';')[0],_cookieDevice=(('; '+document.cookie).split('; mambo_device=')[1]||'').split(';')[0],_savedPlayer=localStorage.getItem('mambo_player')||_cookiePlayer,_savedDevice=localStorage.getItem('mambo_device')||_cookieDevice;const mode=_qpMode||(location.pathname.startsWith('/play')?'play':location.pathname.startsWith('/staff')?'staff':((_savedPlayer||_savedDevice)?'play':'tv'));
@@ -848,5 +849,16 @@ advanceGame=async function(s){
 };
 Object.assign(window,{openMiniGamePicker,closeMiniGamePicker,miniGameSelect,queueMiniGame,miniGameAction,miniGameCodeSubmit,refreshMiniGameStaffStatus});
 
-Object.assign(window,{sendAnswer,pickAnswer,validateMulti,playerAction,launchQuizSetup,startConfiguredQuiz,stopQuiz,resetTotal,renderStaffShell,chooseAvatar,staffTab,staffLogout,loadStaffHistory,refreshStaff,prepareTvWaitingImages,saveTvWaitingImages,removeTvSlide,clearTvSlides,loadStaffTvSlides,removePendingTvSlide,submitCodeChallenge});(()=>{if(mode==='play')play();else if(mode==='staff'){sessionStorage.getItem('mambo_staff')==='1'?renderStaffShell():staffLogin()}else tv();syncServerClock();setInterval(syncServerClock,30000)})();
+Object.assign(window,{sendAnswer,pickAnswer,validateMulti,playerAction,launchQuizSetup,startConfiguredQuiz,stopQuiz,resetTotal,renderStaffShell,chooseAvatar,staffTab,staffLogout,loadStaffHistory,refreshStaff,prepareTvWaitingImages,saveTvWaitingImages,removeTvSlide,clearTvSlides,loadStaffTvSlides,removePendingTvSlide,submitCodeChallenge});
+async function checkAppBuild(){
+  try{
+    const r=await fetch('/version.json?ts='+Date.now(),{cache:'no-store'});
+    if(!r.ok)return;
+    const v=await r.json();
+    if(v?.build&&v.build!==APP_BUILD){
+      location.reload();
+    }
+  }catch(e){}
+}
+(()=>{if(mode==='play')play();else if(mode==='staff'){sessionStorage.getItem('mambo_staff')==='1'?renderStaffShell():staffLogin()}else tv();syncServerClock();setInterval(syncServerClock,30000);setTimeout(checkAppBuild,2500);setInterval(checkAppBuild,15000)})();
 </script></body></html>
