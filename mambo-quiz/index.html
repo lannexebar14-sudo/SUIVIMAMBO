@@ -785,13 +785,16 @@ function renderMiniGamePlayer(s,mg,p){
     return '<div class="phone"><div class="box"><div class="brand">MINI-JEU</div><h1>'+x.icon+' '+x.title+'</h1><div id="mgPlayerGo" class="winner-glow" style="margin:18px auto">ATTENDS…</div><div id="mgPlayerTimer" class="code" style="font-size:54px">'+mgFmt(mgLeft(mg.go_at))+'</div><button id="mgActionBtn" class="mgAction" style="display:none" onclick="miniGameAction(\'tap\')">APPUYER !</button><div id="mgPlayerMsg" class="muted" style="margin-top:14px"></div></div></div>';
   }
   if(mg.game_type==='survive'){
-    return '<div class="phone"><div class="box"><div class="brand">MINI-JEU</div><h1>☠️ SURVIS !</h1><p>Choisis ton côté avant la fin.</p><div id="mgPlayerTimer" class="code" style="font-size:52px">'+mgFmt(mgLeft(mg.ends_at))+'</div>'+(mg.submitted?'<h2>✅ '+(mg.my_choice==='A'?'GAUCHE':'DROITE')+'</h2><p class="muted">Choix verrouillé.</p>':'<div class="mgChoices"><button class="btn alt mgChoice" onclick="miniGameAction(\'A\')">⬅️ GAUCHE</button><button class="btn alt mgChoice" onclick="miniGameAction(\'B\')">➡️ DROITE</button></div>')+'</div></div>';
+    const wait=mgLeft(mg.go_at)>0;
+    return '<div class="phone"><div class="box"><div class="brand">MINI-JEU</div><h1>☠️ SURVIS !</h1><p>'+(wait?'PRÉPARE-TOI…':'Choisis ton côté avant la fin.')+'</p><div id="mgPlayerTimer" class="code" style="font-size:52px">'+mgFmt(wait?mgLeft(mg.go_at):mgLeft(mg.ends_at))+'</div>'+(wait?'<div class="winner-glow" style="font-size:30px">ÇA COMMENCE…</div>':(mg.submitted?'<h2>✅ '+(mg.my_choice==='A'?'GAUCHE':'DROITE')+'</h2><p class="muted">Choix verrouillé.</p>':'<div class="mgChoices"><button class="btn alt mgChoice" onclick="miniGameAction(\'A\')">⬅️ GAUCHE</button><button class="btn alt mgChoice" onclick="miniGameAction(\'B\')">➡️ DROITE</button></div>'))+'</div></div>';
   }
   if(mg.game_type==='minority'){
-    return '<div class="phone"><div class="box"><div class="brand">MINI-JEU</div><h1>🧠 COPIE PAS LES AUTRES</h1><p>Le symbole le moins choisi gagne.</p><div id="mgPlayerTimer" class="code" style="font-size:52px">'+mgFmt(mgLeft(mg.ends_at))+'</div>'+(mg.submitted?'<h1>'+mgSymbol(mg.my_choice)+'</h1><p class="muted">Choix verrouillé.</p>':'<div class="mgChoices mgSymbols">'+['A','B','C','D'].map(function(v){return '<button class="btn alt mgChoice" onclick="miniGameAction(\''+v+'\')">'+mgSymbol(v)+'</button>'}).join('')+'</div>')+'</div></div>';
+    const wait=mgLeft(mg.go_at)>0;
+    return '<div class="phone"><div class="box"><div class="brand">MINI-JEU</div><h1>🧠 COPIE PAS LES AUTRES</h1><p>'+(wait?'PRÉPARE-TOI…':'Le symbole le moins choisi gagne.')+'</p><div id="mgPlayerTimer" class="code" style="font-size:52px">'+mgFmt(wait?mgLeft(mg.go_at):mgLeft(mg.ends_at))+'</div>'+(wait?'<div class="winner-glow" style="font-size:30px">ÇA COMMENCE…</div>':(mg.submitted?'<h1>'+mgSymbol(mg.my_choice)+'</h1><p class="muted">Choix verrouillé.</p>':'<div class="mgChoices mgSymbols">'+['A','B','C','D'].map(function(v){return '<button class="btn alt mgChoice" onclick="miniGameAction(\''+v+'\')">'+mgSymbol(v)+'</button>'}).join('')+'</div>'))+'</div></div>';
   }
   if(mg.game_type==='coin'){
-    return '<div class="phone"><div class="box"><div class="brand">MINI-JEU</div><h1>🪙 PILE OU FACE</h1><div id="mgPlayerTimer" class="code" style="font-size:52px">'+mgFmt(mgLeft(mg.ends_at))+'</div>'+(mg.submitted?'<h2>✅ '+String(mg.my_choice||'').toUpperCase()+'</h2><p class="muted">Choix verrouillé.</p>':'<div class="mgChoices"><button class="btn alt mgChoice" onclick="miniGameAction(\'pile\')">🪙 PILE</button><button class="btn alt mgChoice" onclick="miniGameAction(\'face\')">✨ FACE</button></div>')+'</div></div>';
+    const wait=mgLeft(mg.go_at)>0;
+    return '<div class="phone"><div class="box"><div class="brand">MINI-JEU</div><h1>🪙 PILE OU FACE</h1><p>'+(wait?'PRÉPARE-TOI…':'Choisis ton camp.')+'</p><div id="mgPlayerTimer" class="code" style="font-size:52px">'+mgFmt(wait?mgLeft(mg.go_at):mgLeft(mg.ends_at))+'</div>'+(wait?'<div class="winner-glow" style="font-size:30px">ÇA COMMENCE…</div>':(mg.submitted?'<h2>✅ '+String(mg.my_choice||'').toUpperCase()+'</h2><p class="muted">Choix verrouillé.</p>':'<div class="mgChoices"><button class="btn alt mgChoice" onclick="miniGameAction(\'pile\')">🪙 PILE</button><button class="btn alt mgChoice" onclick="miniGameAction(\'face\')">✨ FACE</button></div>'))+'</div></div>';
   }
   const loc=mg.public_data?.location||'Dans le Mambo';
   return '<div class="phone"><div class="box"><div class="brand">MINI-JEU</div><h1>🔐 CODE SECRET</h1><div class="codeChallengePoints">+'+Number(mg.points||200)+' POINTS</div><div id="mgPlayerTimer" class="code" style="font-size:52px">'+formatChallengeTime(mgLeft(mg.ends_at))+'</div><div class="label">LE CODE EST CACHÉ ICI</div><div class="codeChallengeLocation" style="font-size:22px;padding:14px">'+esc(loc)+'</div><input id="mgCodeInput" class="input codeChallengePhoneInput" maxlength="20" placeholder="ENTRE LE CODE"><button class="btn green full" onclick="miniGameCodeSubmit()">VALIDER LE CODE</button><div id="mgPlayerMsg" class="muted" style="margin-top:12px"></div></div></div>';
@@ -803,7 +806,10 @@ function updateMiniGameTVClock(s){
   const timer=document.getElementById('mgTvTimer'),go=document.getElementById('mgTvGo');
   if(mg.game_type==='red_button'||mg.game_type==='reflex'){
     const wait=mgLeft(mg.go_at)>0;if(go)go.textContent=wait?'ATTENDS…':'GO !';if(timer)timer.textContent=mgFmt(wait?mgLeft(mg.go_at):mgLeft(mg.ends_at));
-  }else if(timer)timer.textContent=mg.game_type==='code_secret'?formatChallengeTime(mgLeft(mg.ends_at)):mgFmt(mgLeft(mg.ends_at));
+  }else if(timer){
+    const wait=mgLeft(mg.go_at)>0;
+    timer.textContent=mg.game_type==='code_secret'?formatChallengeTime(mgLeft(mg.ends_at)):mgFmt(wait?mgLeft(mg.go_at):mgLeft(mg.ends_at));
+  }
 }
 function updateMiniGamePlayerClock(s){
   const mg=ACTIVE_PLAYER_MINIGAME;if(!mg)return;
