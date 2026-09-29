@@ -384,7 +384,7 @@ body{min-height:100svh!important;min-height:100dvh!important}
 </style></head><body><div id="app"><div class="page hero"><div><div class="big">LE MAMBO</div><p>Connexion au Grand Quiz…</p></div></div></div>
 <script>
 const app=document.getElementById('app');
-const APP_BUILD='20260924-quiz-v10.2';
+const APP_BUILD='20260929-quiz-v11-special-modes';
 const SB='https://otgubsvmcbaocrndngrq.supabase.co/rest/v1/';
 const KEY='sb_publishable__d50uWZVhfLcfzHv70ZOSA_QySE92AW';
 const _qpMode=new URLSearchParams(location.search).get('mode'),_cookiePlayer=(('; '+document.cookie).split('; mambo_player=')[1]||'').split(';')[0],_cookieDevice=(('; '+document.cookie).split('; mambo_device=')[1]||'').split(';')[0],_savedPlayer=localStorage.getItem('mambo_player')||_cookiePlayer,_savedDevice=localStorage.getItem('mambo_device')||_cookieDevice;const mode=_qpMode||(location.pathname.startsWith('/play')?'play':location.pathname.startsWith('/staff')?'staff':((_savedPlayer||_savedDevice)?'play':'tv'));
@@ -1340,6 +1340,91 @@ renderPlayer=async function(s,d){
     app.insertAdjacentHTML('beforeend',playerHudHtml(s,se,p,h));
   }
 };
+
+/* V11 — MODES SPÉCIAUX : pénalité, 3 vies, élimination directe */
+const SPECIAL_MODE_META={
+  normal:{icon:'🎯',label:'MODE NORMAL'},
+  point_penalty:{icon:'💸',label:'PERTE DE POINTS'},
+  three_lives:{icon:'❤️',label:'3 VIES'},
+  sudden_death:{icon:'☠️',label:'ÉLIMINATION DIRECTE'}
+};
+function specialModeMeta(se){return SPECIAL_MODE_META[se?.special_mode]||SPECIAL_MODE_META.normal}
+function specialModeIsActive(s,se){return se?.special_mode&&se.special_mode!=='normal'&&Number.isInteger(Number(se.special_mode_effective_question))&&Number(s?.question_index||0)>=Number(se.special_mode_effective_question)}
+function specialModeBannerHtml(s,se){
+  if(!specialModeIsActive(s,se))return '';
+  const m=specialModeMeta(se),extra=se.special_mode==='point_penalty'?' • −'+Number(se.penalty_points||100)+' pts / erreur':se.special_mode==='three_lives'?' • 3 vies':'';
+  return '<div id="specialModeBanner" style="position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:45;padding:8px 14px;border-radius:999px;background:#080711e8;border:1px solid #ffffff2d;box-shadow:0 8px 28px #0008;font-size:12px;font-weight:1000;letter-spacing:.06em;white-space:nowrap">'+m.icon+' '+m.label+extra+'</div>';
+}
+async function setSpecialMode(mode){
+  const s=await getState(),se=await getSession(s);if(!s||!se)return toast('Aucune partie active');
+  if(!SPECIAL_MODE_META[mode])return;
+  const midQuestion=['question','reveal'].includes(s.phase);
+  const effective=Math.max(0,Number(s.question_index||0)+(midQuestion?1:0));
+  const body={special_mode:mode,pending_special_mode:null,special_mode_effective_question:effective};
+  if(mode==='point_penalty'){
+    const n=Math.max(0,Math.min(5000,Number(document.getElementById('specialPenalty')?.value||100)));
+    body.penalty_points=n;body.penalize_no_answer=!!document.getElementById('specialNoAnswer')?.checked;body.min_score_zero=!!document.getElementById('specialFloorZero')?.checked;
+  }
+  await db('mambo_quiz_sessions?id=eq.'+se.id,{method:'PATCH',body});
+  if(mode==='three_lives')await db('mambo_quiz_players?session_id=eq.'+se.id+'&approval_status=eq.approved&eliminated=eq.false',{method:'PATCH',body:{special_lives:3}});
+  toast((midQuestion?'Programmé pour la prochaine question : ':'Mode activé : ')+SPECIAL_MODE_META[mode].label);
+  refreshStaff();
+}
+async function reinstateSpecialPlayer(id){
+  await db('mambo_quiz_players?id=eq.'+id,{method:'PATCH',body:{eliminated:false,eliminated_at_question:null,special_lives:3}});
+  toast('Joueur réintégré');refreshStaff();
+}
+function specialModeStaffHtml(se,s){
+  const mode=se?.special_mode||'normal',eff=Number(se?.special_mode_effective_question),waiting=Number.isFinite(eff)&&eff>Number(s?.question_index||0);
+  return '<div class="box" id="specialModesCard" style="margin-top:14px;border-color:#9b67ff55">'+
+    '<div class="staffSectionTitle"><div><div class="label">MODES SPÉCIAUX</div><h2>'+specialModeMeta(se).icon+' '+specialModeMeta(se).label+'</h2></div><span class="staffStatusBadge">'+(waiting?'PROCHAINE QUESTION':'ACTIF')+'</span></div>'+
+    '<p class="muted">Le calcul des bonnes réponses reste basé sur la rapidité. Le mode spécial agit uniquement sur les erreurs.</p>'+
+    '<div class="controls"><button class="btn alt" onclick="setSpecialMode(\'normal\')">🎯 NORMAL</button><button class="btn orange" onclick="setSpecialMode(\'point_penalty\')">💸 − POINTS</button><button class="btn" onclick="setSpecialMode(\'three_lives\')">❤️ 3 VIES</button><button class="btn red" onclick="setSpecialMode(\'sudden_death\')">☠️ ÉLIMINATION</button></div>'+
+    '<div class="staffTwo" style="margin-top:12px"><div><div class="label">PÉNALITÉ PAR ERREUR</div><input id="specialPenalty" class="input" type="number" min="0" max="5000" step="50" value="'+Number(se?.penalty_points||100)+'"></div>'+
+    '<div style="display:grid;align-content:center;gap:8px"><label><input id="specialNoAnswer" type="checkbox" '+(se?.penalize_no_answer?'checked':'')+'> Pénaliser aussi une absence de réponse</label><label><input id="specialFloorZero" type="checkbox" '+(se?.min_score_zero!==false?'checked':'')+'> Score minimum : 0</label></div></div>'+
+    '<p class="muted" style="margin-bottom:0">Si tu changes de mode pendant une question ou sa correction, le changement prend effet à la question suivante.</p></div>';
+}
+const _renderStaffShellBeforeSpecialModes=renderStaffShell;
+renderStaffShell=function(){
+  _renderStaffShellBeforeSpecialModes();
+  setTimeout(async()=>{try{const s=await getState(),se=await getSession(s),panel=document.querySelector('[data-panel="quiz"]');if(panel&&!document.getElementById('specialModesCard'))panel.insertAdjacentHTML('afterbegin',specialModeStaffHtml(se,s))}catch(e){console.warn(e)}},50);
+};
+const _refreshStaffBeforeSpecialModes=refreshStaff;
+refreshStaff=async function(){
+  await _refreshStaffBeforeSpecialModes();
+  try{
+    const s=await getState(),se=await getSession(s),card=document.getElementById('specialModesCard');
+    if(card)card.outerHTML=specialModeStaffHtml(se,s);
+    const players=await db('mambo_quiz_players?session_id=eq.'+s.current_session_id+'&approval_status=eq.approved&select=id,nickname,avatar,score,special_lives,eliminated,eliminated_at_question&order=score.desc,joined_at.asc');
+    const el=document.getElementById('stApprovedList');
+    if(el)el.innerHTML=(players||[]).map((p,i)=>'<div class="row" style="'+(p.eliminated?'opacity:.58':'')+'"><div><b>#'+(i+1)+' <span class="avatar-inline">'+avatarOf(p)+'</span>'+esc(p.nickname)+'</b><div class="muted">'+Number(p.score||0)+' pts • '+(p.eliminated?'☠️ ÉLIMINÉ':'❤️ '+Number(p.special_lives??3)+' vie'+(Number(p.special_lives??3)>1?'s':''))+'</div></div><div class="row-actions">'+(p.eliminated?'<button class="btn green" onclick="reinstateSpecialPlayer(\''+p.id+'\')">RÉINTÉGRER</button>':'')+'<button class="btn red" onclick="playerAction(\''+p.id+'\',\'reject\')">RETIRER</button><button class="btn alt" onclick="playerAction(\''+p.id+'\',\'delete\')">SUPPRIMER</button></div></div>').join('')||'<p class="muted">Aucun joueur.</p>';
+  }catch(e){console.warn('special modes staff',e)}
+};
+const _renderPlayerBeforeSpecialModes=renderPlayer;
+renderPlayer=async function(s,d){
+  const p=d?.p,se=d?.se||await getSession(s);
+  if(p?.approval_status==='approved'&&p?.eliminated){
+    app.innerHTML='<div class="phone"><div class="box"><div class="brand">LE MAMBO • GRAND QUIZ</div><div style="font-size:82px">☠️</div><h1>ÉLIMINÉ</h1><p>Ton parcours s’arrête ici pour cette partie.</p><h2>'+Number(p.score||0)+' pts</h2><p class="muted">Tu peux suivre la suite du quiz sur l’écran.</p></div></div>';return;
+  }
+  await _renderPlayerBeforeSpecialModes(s,d);
+  if(p?.approval_status==='approved'&&specialModeIsActive(s,se)){
+    document.getElementById('specialModeBanner')?.remove();
+    app.insertAdjacentHTML('beforeend',specialModeBannerHtml(s,se));
+    if(se.special_mode==='three_lives'){
+      const box=app.querySelector('.phone .box');if(box)box.insertAdjacentHTML('afterbegin','<div class="pill" style="display:inline-block;margin-bottom:8px">❤️ '+Number(p.special_lives??3)+' VIE'+(Number(p.special_lives??3)>1?'S':'')+'</div>');
+    }
+    if(s.phase==='reveal'&&d?.ans?.correct===false&&se.special_mode==='point_penalty'){
+      const h=app.querySelector('.phone h1');if(h)h.textContent='MAUVAISE RÉPONSE • −'+Number(se.penalty_points||100)+' PTS';
+    }
+  }
+};
+const _renderTVBeforeSpecialModes=renderTV;
+renderTV=async function(s){
+  await _renderTVBeforeSpecialModes(s);
+  const se=await getSession(s);
+  if(s?.status==='running'&&specialModeIsActive(s,se)){document.getElementById('specialModeBanner')?.remove();app.insertAdjacentHTML('beforeend',specialModeBannerHtml(s,se))}
+};
+
 Object.assign(window,{openMiniGamePicker,closeMiniGamePicker,miniGameSelect,queueMiniGame,miniGameAction,miniGameCodeSubmit,refreshMiniGameStaffStatus});
 
 function lockPlayerZoom(){
