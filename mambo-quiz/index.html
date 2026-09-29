@@ -384,7 +384,7 @@ body{min-height:100svh!important;min-height:100dvh!important}
 </style></head><body><div id="app"><div class="page hero"><div><div class="big">LE MAMBO</div><p>Connexion au Grand Quiz…</p></div></div></div>
 <script>
 const app=document.getElementById('app');
-const APP_BUILD='20260929-quiz-v11.1-hearts';
+const APP_BUILD='20260929-quiz-v11.2-single-winner';
 const SB='https://otgubsvmcbaocrndngrq.supabase.co/rest/v1/';
 const KEY='sb_publishable__d50uWZVhfLcfzHv70ZOSA_QySE92AW';
 const _qpMode=new URLSearchParams(location.search).get('mode'),_cookiePlayer=(('; '+document.cookie).split('; mambo_player=')[1]||'').split(';')[0],_cookieDevice=(('; '+document.cookie).split('; mambo_device=')[1]||'').split(';')[0],_savedPlayer=localStorage.getItem('mambo_player')||_cookiePlayer,_savedDevice=localStorage.getItem('mambo_device')||_cookieDevice;const mode=_qpMode||(location.pathname.startsWith('/play')?'play':location.pathname.startsWith('/staff')?'staff':((_savedPlayer||_savedDevice)?'play':'tv'));
@@ -1395,6 +1395,7 @@ renderStaffShell=function(){
 };
 const _refreshStaffBeforeSpecialModes=refreshStaff;
 refreshStaff=async function(){
+  const __ss=await getState();if(__ss?.phase==='special_winner'){await renderSpecialWinner(__ss);return;}
   await _refreshStaffBeforeSpecialModes();
   try{
     const s=await getState(),se=await getSession(s),card=document.getElementById('specialModesCard');
@@ -1422,8 +1423,26 @@ renderPlayer=async function(s,d){
     }
   }
 };
+
+async function renderSpecialWinner(s,d){
+  const se=d?.se||await getSession(s);
+  const players=d?.players||await db('mambo_quiz_players?session_id=eq.'+s.current_session_id+'&select=*');
+  const w=(players||[]).find(p=>p.id===se?.special_winner_id)||(players||[]).find(p=>p.approval_status==='approved'&&!p.eliminated);
+  if(!w)return false;
+  if(MODE==='tv'){
+    app.innerHTML='<div class="tv"><div class="box" style="text-align:center"><div class="brand">LE MAMBO • GRAND QUIZ</div><div style="font-size:96px">🏆</div><div class="label">DERNIER SURVIVANT</div><h1 style="font-size:64px;margin:8px 0">'+avatarOf(w)+' '+esc(w.nickname)+'</h1><h2>'+Number(w.score||0)+' POINTS</h2><p class="muted">UN SEUL GAGNANT • BRAVO !</p></div></div>';
+  }else if(MODE==='player'){
+    const me=(players||[]).find(p=>p.id===localStorage.getItem('mambo_quiz_player_id'));
+    if(me?.id===w.id)app.innerHTML='<div class="phone"><div class="box"><div class="brand">LE MAMBO • GRAND QUIZ</div><div style="font-size:82px">🏆</div><h1>GAGNANT !</h1><h2>'+avatarOf(w)+' '+esc(w.nickname)+'</h2><p>Tu es le dernier survivant.</p></div></div>';
+    else app.innerHTML='<div class="phone"><div class="box"><div class="brand">LE MAMBO • GRAND QUIZ</div><div style="font-size:70px">🏆</div><h1>'+esc(w.nickname)+' GAGNE !</h1><p>Dernier survivant du quiz.</p></div></div>';
+  }else{
+    app.innerHTML='<div class="staff"><div class="box" style="text-align:center"><div style="font-size:72px">🏆</div><div class="label">DERNIER SURVIVANT</div><h1>'+avatarOf(w)+' '+esc(w.nickname)+'</h1><h2>'+Number(w.score||0)+' POINTS</h2><button class="btn green" onclick="refreshStaff()">ACTUALISER</button></div></div>';
+  }
+  return true;
+}
 const _renderTVBeforeSpecialModes=renderTV;
 renderTV=async function(s){
+  if(s?.phase==='special_winner'){await renderSpecialWinner(s);return;}
   await _renderTVBeforeSpecialModes(s);
   const se=await getSession(s);
   if(s?.status==='running'&&specialModeIsActive(s,se)){document.getElementById('specialModeBanner')?.remove();app.insertAdjacentHTML('beforeend',specialModeBannerHtml(s,se))}
