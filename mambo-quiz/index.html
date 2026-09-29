@@ -384,7 +384,7 @@ body{min-height:100svh!important;min-height:100dvh!important}
 </style></head><body><div id="app"><div class="page hero"><div><div class="big">LE MAMBO</div><p>Connexion au Grand Quiz…</p></div></div></div>
 <script>
 const app=document.getElementById('app');
-const APP_BUILD='20260929-quiz-v11-special-modes';
+const APP_BUILD='20260929-quiz-v11.1-hearts';
 const SB='https://otgubsvmcbaocrndngrq.supabase.co/rest/v1/';
 const KEY='sb_publishable__d50uWZVhfLcfzHv70ZOSA_QySE92AW';
 const _qpMode=new URLSearchParams(location.search).get('mode'),_cookiePlayer=(('; '+document.cookie).split('; mambo_player=')[1]||'').split(';')[0],_cookieDevice=(('; '+document.cookie).split('; mambo_device=')[1]||'').split(';')[0],_savedPlayer=localStorage.getItem('mambo_player')||_cookiePlayer,_savedDevice=localStorage.getItem('mambo_device')||_cookieDevice;const mode=_qpMode||(location.pathname.startsWith('/play')?'play':location.pathname.startsWith('/staff')?'staff':((_savedPlayer||_savedDevice)?'play':'tv'));
@@ -1349,6 +1349,10 @@ const SPECIAL_MODE_META={
   sudden_death:{icon:'☠️',label:'ÉLIMINATION DIRECTE'}
 };
 function specialModeMeta(se){return SPECIAL_MODE_META[se?.special_mode]||SPECIAL_MODE_META.normal}
+function livesHearts(lives){
+  const n=Math.max(0,Math.min(3,Number(lives??3)));
+  return '❤️ '.repeat(n)+'🖤 '.repeat(3-n);
+}
 function specialModeIsActive(s,se){return se?.special_mode&&se.special_mode!=='normal'&&Number.isInteger(Number(se.special_mode_effective_question))&&Number(s?.question_index||0)>=Number(se.special_mode_effective_question)}
 function specialModeBannerHtml(s,se){
   if(!specialModeIsActive(s,se))return '';
@@ -1397,7 +1401,7 @@ refreshStaff=async function(){
     if(card)card.outerHTML=specialModeStaffHtml(se,s);
     const players=await db('mambo_quiz_players?session_id=eq.'+s.current_session_id+'&approval_status=eq.approved&select=id,nickname,avatar,score,special_lives,eliminated,eliminated_at_question&order=score.desc,joined_at.asc');
     const el=document.getElementById('stApprovedList');
-    if(el)el.innerHTML=(players||[]).map((p,i)=>'<div class="row" style="'+(p.eliminated?'opacity:.58':'')+'"><div><b>#'+(i+1)+' <span class="avatar-inline">'+avatarOf(p)+'</span>'+esc(p.nickname)+'</b><div class="muted">'+Number(p.score||0)+' pts • '+(p.eliminated?'☠️ ÉLIMINÉ':'❤️ '+Number(p.special_lives??3)+' vie'+(Number(p.special_lives??3)>1?'s':''))+'</div></div><div class="row-actions">'+(p.eliminated?'<button class="btn green" onclick="reinstateSpecialPlayer(\''+p.id+'\')">RÉINTÉGRER</button>':'')+'<button class="btn red" onclick="playerAction(\''+p.id+'\',\'reject\')">RETIRER</button><button class="btn alt" onclick="playerAction(\''+p.id+'\',\'delete\')">SUPPRIMER</button></div></div>').join('')||'<p class="muted">Aucun joueur.</p>';
+    if(el)el.innerHTML=(players||[]).map((p,i)=>'<div class="row" style="'+(p.eliminated?'opacity:.58':'')+'"><div><b>#'+(i+1)+' <span class="avatar-inline">'+avatarOf(p)+'</span>'+esc(p.nickname)+'</b><div class="muted">'+Number(p.score||0)+' pts • '+(p.eliminated?'☠️ ÉLIMINÉ':livesHearts(p.special_lives))+'</div></div><div class="row-actions">'+(p.eliminated?'<button class="btn green" onclick="reinstateSpecialPlayer(\''+p.id+'\')">RÉINTÉGRER</button>':'')+'<button class="btn red" onclick="playerAction(\''+p.id+'\',\'reject\')">RETIRER</button><button class="btn alt" onclick="playerAction(\''+p.id+'\',\'delete\')">SUPPRIMER</button></div></div>').join('')||'<p class="muted">Aucun joueur.</p>';
   }catch(e){console.warn('special modes staff',e)}
 };
 const _renderPlayerBeforeSpecialModes=renderPlayer;
@@ -1411,7 +1415,7 @@ renderPlayer=async function(s,d){
     document.getElementById('specialModeBanner')?.remove();
     app.insertAdjacentHTML('beforeend',specialModeBannerHtml(s,se));
     if(se.special_mode==='three_lives'){
-      const box=app.querySelector('.phone .box');if(box)box.insertAdjacentHTML('afterbegin','<div class="pill" style="display:inline-block;margin-bottom:8px">❤️ '+Number(p.special_lives??3)+' VIE'+(Number(p.special_lives??3)>1?'S':'')+'</div>');
+      const box=app.querySelector('.phone .box');if(box)box.insertAdjacentHTML('afterbegin','<div class="pill" style="display:inline-block;margin-bottom:8px;font-size:22px;letter-spacing:4px">'+livesHearts(p.special_lives)+'</div>');
     }
     if(s.phase==='reveal'&&d?.ans?.correct===false&&se.special_mode==='point_penalty'){
       const h=app.querySelector('.phone h1');if(h)h.textContent='MAUVAISE RÉPONSE • −'+Number(se.penalty_points||100)+' PTS';
