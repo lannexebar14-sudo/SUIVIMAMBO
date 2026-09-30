@@ -384,7 +384,7 @@ body{min-height:100svh!important;min-height:100dvh!important}
 </style></head><body><div id="app"><div class="page hero"><div><div class="big">LE MAMBO</div><p>Connexion au Grand Quiz…</p></div></div></div>
 <script>
 const app=document.getElementById('app');
-const APP_BUILD='20260929-quiz-v11.2-single-winner';
+const APP_BUILD='20260930-quiz-v11.3-random-risk';
 const SB='https://otgubsvmcbaocrndngrq.supabase.co/rest/v1/';
 const KEY='sb_publishable__d50uWZVhfLcfzHv70ZOSA_QySE92AW';
 const _qpMode=new URLSearchParams(location.search).get('mode'),_cookiePlayer=(('; '+document.cookie).split('; mambo_player=')[1]||'').split(';')[0],_cookieDevice=(('; '+document.cookie).split('; mambo_device=')[1]||'').split(';')[0],_savedPlayer=localStorage.getItem('mambo_player')||_cookiePlayer,_savedDevice=localStorage.getItem('mambo_device')||_cookieDevice;const mode=_qpMode||(location.pathname.startsWith('/play')?'play':location.pathname.startsWith('/staff')?'staff':((_savedPlayer||_savedDevice)?'play':'tv'));
@@ -1353,7 +1353,19 @@ function livesHearts(lives){
   const n=Math.max(0,Math.min(3,Number(lives??3)));
   return '❤️ '.repeat(n)+'🖤 '.repeat(3-n);
 }
-function specialModeIsActive(s,se){return se?.special_mode&&se.special_mode!=='normal'&&Number.isInteger(Number(se.special_mode_effective_question))&&Number(s?.question_index||0)>=Number(se.special_mode_effective_question)}
+function specialModeIsActive(s,se){
+  if(!se?.special_mode||se.special_mode==='normal'||!Number.isInteger(Number(se.special_mode_effective_question))||Number(s?.question_index||0)<Number(se.special_mode_effective_question))return false;
+  if(['point_penalty','three_lives'].includes(se.special_mode)){
+    const risk=Array.isArray(se.special_question_indices)?se.special_question_indices.map(Number):[];
+    return risk.includes(Number(s?.question_index||0));
+  }
+  return true;
+}
+function pickSpecialQuestions(first,total){
+  const pool=[];for(let i=Math.max(0,first);i<Math.max(0,total);i++)pool.push(i);
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+  return pool.slice(0,3).sort((a,b)=>a-b);
+}
 function specialModeBannerHtml(s,se){
   if(!specialModeIsActive(s,se))return '';
   const m=specialModeMeta(se),extra=se.special_mode==='point_penalty'?' • −'+Number(se.penalty_points||100)+' pts / erreur':se.special_mode==='three_lives'?' • 3 vies':'';
@@ -1362,16 +1374,19 @@ function specialModeBannerHtml(s,se){
 async function setSpecialMode(mode){
   const s=await getState(),se=await getSession(s);if(!s||!se)return toast('Aucune partie active');
   if(!SPECIAL_MODE_META[mode])return;
-  const midQuestion=['question','reveal'].includes(s.phase);
-  const effective=Math.max(0,Number(s.question_index||0)+(midQuestion?1:0));
-  const body={special_mode:mode,pending_special_mode:null,special_mode_effective_question:effective};
+  const inProgress=s.status==='running'&&!['lobby','waiting','stopped'].includes(s.phase);
+  const effective=Math.max(0,Number(s.question_index||0)+(inProgress?1:0));
+  const riskQuestions=['point_penalty','three_lives'].includes(mode)?pickSpecialQuestions(effective,Number(se.question_count||0)):[];
+  if(['point_penalty','three_lives'].includes(mode)&&riskQuestions.length===0)return toast('Aucune question restante pour activer ce mode');
+  const body={special_mode:mode,pending_special_mode:null,special_mode_effective_question:effective,special_question_indices:riskQuestions};
   if(mode==='point_penalty'){
     const n=Math.max(0,Math.min(5000,Number(document.getElementById('specialPenalty')?.value||100)));
     body.penalty_points=n;body.penalize_no_answer=!!document.getElementById('specialNoAnswer')?.checked;body.min_score_zero=!!document.getElementById('specialFloorZero')?.checked;
   }
   await db('mambo_quiz_sessions?id=eq.'+se.id,{method:'PATCH',body});
   if(mode==='three_lives')await db('mambo_quiz_players?session_id=eq.'+se.id+'&approval_status=eq.approved&eliminated=eq.false',{method:'PATCH',body:{special_lives:3}});
-  toast((midQuestion?'Programmé pour la prochaine question : ':'Mode activé : ')+SPECIAL_MODE_META[mode].label);
+  const randomInfo=['point_penalty','three_lives'].includes(mode)?' • '+riskQuestions.length+' question'+(riskQuestions.length>1?'s':'')+' à risque tirée'+(riskQuestions.length>1?'s':'')+' au sort':'';
+  toast((inProgress?'Actif à partir de la prochaine question : ':'Mode activé : ')+SPECIAL_MODE_META[mode].label+randomInfo);
   refreshStaff();
 }
 async function reinstateSpecialPlayer(id){
@@ -1379,14 +1394,14 @@ async function reinstateSpecialPlayer(id){
   toast('Joueur réintégré');refreshStaff();
 }
 function specialModeStaffHtml(se,s){
-  const mode=se?.special_mode||'normal',eff=Number(se?.special_mode_effective_question),waiting=Number.isFinite(eff)&&eff>Number(s?.question_index||0);
+  const mode=se?.special_mode||'normal',eff=Number(se?.special_mode_effective_question),waiting=Number.isFinite(eff)&&eff>Number(s?.question_index||0),riskCount=Array.isArray(se?.special_question_indices)?se.special_question_indices.length:0;
   return '<div class="box" id="specialModesCard" style="margin-top:14px;border-color:#9b67ff55">'+
     '<div class="staffSectionTitle"><div><div class="label">MODES SPÉCIAUX</div><h2>'+specialModeMeta(se).icon+' '+specialModeMeta(se).label+'</h2></div><span class="staffStatusBadge">'+(waiting?'PROCHAINE QUESTION':'ACTIF')+'</span></div>'+
-    '<p class="muted">Le calcul des bonnes réponses reste basé sur la rapidité. Le mode spécial agit uniquement sur les erreurs.</p>'+
+    '<p class="muted">Le calcul des bonnes réponses reste basé sur la rapidité. '+(['point_penalty','three_lives'].includes(mode)?'<b>'+riskCount+' questions à risque</b> ont été tirées au hasard parmi les questions restantes. Elles ne sont pas forcément consécutives.':'Le mode spécial agit uniquement sur les erreurs.')+'</p>'+
     '<div class="controls"><button class="btn alt" onclick="setSpecialMode(\'normal\')">🎯 NORMAL</button><button class="btn orange" onclick="setSpecialMode(\'point_penalty\')">💸 − POINTS</button><button class="btn" onclick="setSpecialMode(\'three_lives\')">❤️ 3 VIES</button><button class="btn red" onclick="setSpecialMode(\'sudden_death\')">☠️ ÉLIMINATION</button></div>'+
     '<div class="staffTwo" style="margin-top:12px"><div><div class="label">PÉNALITÉ PAR ERREUR</div><input id="specialPenalty" class="input" type="number" min="0" max="5000" step="50" value="'+Number(se?.penalty_points||100)+'"></div>'+
     '<div style="display:grid;align-content:center;gap:8px"><label><input id="specialNoAnswer" type="checkbox" '+(se?.penalize_no_answer?'checked':'')+'> Pénaliser aussi une absence de réponse</label><label><input id="specialFloorZero" type="checkbox" '+(se?.min_score_zero!==false?'checked':'')+'> Score minimum : 0</label></div></div>'+
-    '<p class="muted" style="margin-bottom:0">Si tu changes de mode pendant une question ou sa correction, le changement prend effet à la question suivante.</p></div>';
+    '<p class="muted" style="margin-bottom:0">Perte de points et 3 vies : activation à la question suivante, puis effet uniquement sur les 3 questions surprises tirées au sort dans le reste du quiz.</p></div>';
 }
 const _renderStaffShellBeforeSpecialModes=renderStaffShell;
 renderStaffShell=function(){
