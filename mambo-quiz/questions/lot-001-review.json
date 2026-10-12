@@ -1,0 +1,1442 @@
+[
+  {
+    "id": "BQ-000001",
+    "category": "Musique",
+    "question": "Quel instrument possède généralement 88 touches ?",
+    "choices": [
+      "Violon",
+      "Flûte",
+      "Harpe",
+      "Piano"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000002",
+    "category": "Musique",
+    "question": "Quel groupe a enregistré « Bohemian Rhapsody » ?",
+    "choices": [
+      "Oasis",
+      "Coldplay",
+      "Queen",
+      "ABBA"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000003",
+    "category": "Musique",
+    "question": "Combien de cordes possède une guitare classique standard ?",
+    "choices": [
+      "8",
+      "6",
+      "4",
+      "5"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000004",
+    "category": "Musique",
+    "question": "Quel compositeur a écrit la Neuvième Symphonie ?",
+    "choices": [
+      "Beethoven",
+      "Mozart",
+      "Bach",
+      "Vivaldi"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000005",
+    "category": "Musique",
+    "question": "Quel chanteur est surnommé le King of Pop ?",
+    "choices": [
+      "Prince",
+      "Elvis Presley",
+      "David Bowie",
+      "Michael Jackson"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000006",
+    "category": "Culture G",
+    "question": "Quelle est la capitale du Japon ?",
+    "choices": [
+      "Osaka",
+      "Nagoya",
+      "Tokyo",
+      "Kyoto"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000007",
+    "category": "Culture G",
+    "question": "Combien de côtés a un hexagone ?",
+    "choices": [
+      "8",
+      "6",
+      "5",
+      "7"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000008",
+    "category": "Culture G",
+    "question": "Quel est le symbole chimique de l'or ?",
+    "choices": [
+      "Au",
+      "Ag",
+      "Fe",
+      "O"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000009",
+    "category": "Culture G",
+    "question": "Quelle planète est la plus proche du Soleil ?",
+    "choices": [
+      "Vénus",
+      "Mars",
+      "Terre",
+      "Mercure"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000010",
+    "category": "Culture G",
+    "question": "Combien de minutes compte une heure ?",
+    "choices": [
+      "90",
+      "100",
+      "60",
+      "50"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000011",
+    "category": "APÉRO",
+    "question": "Quel agrume entre traditionnellement dans un mojito ?",
+    "choices": [
+      "Mandarine",
+      "Citron vert",
+      "Orange",
+      "Pamplemousse"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000012",
+    "category": "APÉRO",
+    "question": "Quel alcool est la base d'un gin tonic ?",
+    "choices": [
+      "Gin",
+      "Rhum",
+      "Vodka",
+      "Whisky"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000013",
+    "category": "APÉRO",
+    "question": "Quel ingrédient donne son nom au Bloody Mary sans alcool appelé Virgin Mary ?",
+    "choices": [
+      "Pomme",
+      "Fraise",
+      "Ananas",
+      "Tomate"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000014",
+    "category": "APÉRO",
+    "question": "De quel pays le prosecco est-il originaire ?",
+    "choices": [
+      "Portugal",
+      "Grèce",
+      "Italie",
+      "Espagne"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000015",
+    "category": "APÉRO",
+    "question": "Quel ingrédient est utilisé pour préparer le houmous ?",
+    "choices": [
+      "Petits pois",
+      "Pois chiches",
+      "Lentilles vertes",
+      "Haricots rouges"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000016",
+    "category": "CINÉMA & SÉRIES",
+    "question": "Qui a réalisé Titanic (1997) ?",
+    "choices": [
+      "James Cameron",
+      "Steven Spielberg",
+      "Christopher Nolan",
+      "Peter Jackson"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000017",
+    "category": "CINÉMA & SÉRIES",
+    "question": "Quel acteur incarne Jack dans Titanic ?",
+    "choices": [
+      "Brad Pitt",
+      "Tom Cruise",
+      "Matt Damon",
+      "Leonardo DiCaprio"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000018",
+    "category": "CINÉMA & SÉRIES",
+    "question": "Dans quelle saga trouve-t-on Poudlard ?",
+    "choices": [
+      "Matrix",
+      "Le Hobbit",
+      "Harry Potter",
+      "Star Wars"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000019",
+    "category": "CINÉMA & SÉRIES",
+    "question": "Quel film met en scène le personnage de Simba ?",
+    "choices": [
+      "Tarzan",
+      "Le Roi lion",
+      "Aladdin",
+      "Bambi"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000020",
+    "category": "CINÉMA & SÉRIES",
+    "question": "Quelle série met en scène Walter White ?",
+    "choices": [
+      "Breaking Bad",
+      "Lost",
+      "Friends",
+      "Dark"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000021",
+    "category": "TÉLÉ",
+    "question": "Quel jeu télévisé français utilise les lettres et les chiffres ?",
+    "choices": [
+      "Fort Boyard",
+      "Koh-Lanta",
+      "Intervilles",
+      "Des chiffres et des lettres"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000022",
+    "category": "TÉLÉ",
+    "question": "Dans quelle émission française trouve-t-on le Père Fouras ?",
+    "choices": [
+      "Pékin Express",
+      "Top Chef",
+      "Fort Boyard",
+      "The Voice"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000023",
+    "category": "TÉLÉ",
+    "question": "Quelle émission française met en compétition des cuisiniers professionnels ?",
+    "choices": [
+      "Questions pour un champion",
+      "Top Chef",
+      "Danse avec les stars",
+      "N'oubliez pas les paroles"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000024",
+    "category": "TÉLÉ",
+    "question": "Quel programme est une compétition de chant avec des auditions à l'aveugle ?",
+    "choices": [
+      "The Voice",
+      "Koh-Lanta",
+      "Le Maillon faible",
+      "Fort Boyard"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000025",
+    "category": "TÉLÉ",
+    "question": "Quelle émission française propose de survivre sur une île ?",
+    "choices": [
+      "The Voice",
+      "Tout le monde veut prendre sa place",
+      "Mask Singer",
+      "Koh-Lanta"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000026",
+    "category": "ANNÉES 80/90/2000",
+    "question": "En quelle année est tombé le mur de Berlin ?",
+    "choices": [
+      "1995",
+      "2001",
+      "1989",
+      "1982"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000027",
+    "category": "ANNÉES 80/90/2000",
+    "question": "Quelle console Sony a été lancée au Japon en 1994 ?",
+    "choices": [
+      "PlayStation 3",
+      "PlayStation",
+      "PlayStation 2",
+      "PSP"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000028",
+    "category": "ANNÉES 80/90/2000",
+    "question": "Quel film de 1993 met en scène des dinosaures dans un parc ?",
+    "choices": [
+      "Jurassic Park",
+      "Avatar",
+      "Gladiator",
+      "Titanic"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000029",
+    "category": "ANNÉES 80/90/2000",
+    "question": "En quelle année a débuté le XXIe siècle ?",
+    "choices": [
+      "2000",
+      "1999",
+      "2010",
+      "2001"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000030",
+    "category": "ANNÉES 80/90/2000",
+    "question": "Quel groupe a chanté « Wannabe » en 1996 ?",
+    "choices": [
+      "TLC",
+      "All Saints",
+      "Spice Girls",
+      "Destiny's Child"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000031",
+    "category": "INTERNET",
+    "question": "Que signifie WWW ?",
+    "choices": [
+      "Web World Work",
+      "World Wide Web",
+      "World Web Wire",
+      "Wide World Window"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000032",
+    "category": "INTERNET",
+    "question": "Quel protocole sécurise généralement la navigation Web ?",
+    "choices": [
+      "HTTPS",
+      "FTP",
+      "SMTP",
+      "POP3"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000033",
+    "category": "INTERNET",
+    "question": "Quel symbole figure habituellement dans une adresse e-mail ?",
+    "choices": [
+      "#",
+      "%",
+      "&",
+      "@"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000034",
+    "category": "INTERNET",
+    "question": "Quel langage sert principalement à structurer une page Web ?",
+    "choices": [
+      "Python",
+      "C",
+      "HTML",
+      "SQL"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000035",
+    "category": "INTERNET",
+    "question": "Quel navigateur est développé par Mozilla ?",
+    "choices": [
+      "Opera",
+      "Firefox",
+      "Safari",
+      "Edge"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000036",
+    "category": "JEUX VIDÉO",
+    "question": "Quel personnage Nintendo porte une casquette rouge avec un M ?",
+    "choices": [
+      "Mario",
+      "Link",
+      "Sonic",
+      "Kirby"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000037",
+    "category": "JEUX VIDÉO",
+    "question": "Dans quel jeu construit-on avec des blocs cubiques ?",
+    "choices": [
+      "Tetris Effect",
+      "FIFA",
+      "Gran Turismo",
+      "Minecraft"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000038",
+    "category": "JEUX VIDÉO",
+    "question": "Quel hérisson bleu est un héros de Sega ?",
+    "choices": [
+      "Yoshi",
+      "Pikachu",
+      "Sonic",
+      "Crash"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000039",
+    "category": "JEUX VIDÉO",
+    "question": "Quel studio a créé la série Grand Theft Auto ?",
+    "choices": [
+      "Valve",
+      "Rockstar Games",
+      "Ubisoft",
+      "Nintendo"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000040",
+    "category": "JEUX VIDÉO",
+    "question": "Quelle console portable Nintendo possède deux écrans ?",
+    "choices": [
+      "Nintendo DS",
+      "Game Boy",
+      "Switch Lite",
+      "PS Vita"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000041",
+    "category": "FOOD",
+    "question": "Quel fromage entre traditionnellement dans une salade caprese ?",
+    "choices": [
+      "Cheddar",
+      "Roquefort",
+      "Comté",
+      "Mozzarella"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000042",
+    "category": "FOOD",
+    "question": "Quel ingrédient principal compose le guacamole ?",
+    "choices": [
+      "Concombre",
+      "Épinard",
+      "Avocat",
+      "Courgette"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000043",
+    "category": "FOOD",
+    "question": "Quel pays est associé à l'origine du sushi ?",
+    "choices": [
+      "Maroc",
+      "Japon",
+      "Mexique",
+      "Italie"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000044",
+    "category": "FOOD",
+    "question": "De quel fruit proviennent les raisins secs ?",
+    "choices": [
+      "Raisin",
+      "Figue",
+      "Prune",
+      "Datte"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000045",
+    "category": "FOOD",
+    "question": "Quel ingrédient fait lever une pâte à pain traditionnelle ?",
+    "choices": [
+      "Sel",
+      "Vinaigre",
+      "Poivre",
+      "Levure"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000046",
+    "category": "PEOPLE",
+    "question": "Quel acteur a joué Iron Man dans le MCU ?",
+    "choices": [
+      "Mark Ruffalo",
+      "Chris Hemsworth",
+      "Robert Downey Jr.",
+      "Chris Evans"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000047",
+    "category": "PEOPLE",
+    "question": "Quelle artiste a sorti l'album 21 ?",
+    "choices": [
+      "Madonna",
+      "Adele",
+      "Rihanna",
+      "Beyoncé"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000048",
+    "category": "PEOPLE",
+    "question": "Quel sportif est surnommé La Pulga ?",
+    "choices": [
+      "Lionel Messi",
+      "Cristiano Ronaldo",
+      "Neymar",
+      "Kylian Mbappé"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000049",
+    "category": "PEOPLE",
+    "question": "Quelle chanteuse a joué dans le film A Star Is Born de 2018 ?",
+    "choices": [
+      "Taylor Swift",
+      "Katy Perry",
+      "Dua Lipa",
+      "Lady Gaga"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000050",
+    "category": "PEOPLE",
+    "question": "Quel acteur interprète Mr Bean ?",
+    "choices": [
+      "Jim Carrey",
+      "Steve Carell",
+      "Rowan Atkinson",
+      "Hugh Laurie"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000051",
+    "category": "FRANCE",
+    "question": "Quelle est la capitale de la France ?",
+    "choices": [
+      "Bordeaux",
+      "Paris",
+      "Lyon",
+      "Marseille"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000052",
+    "category": "FRANCE",
+    "question": "Quel fleuve traverse Paris ?",
+    "choices": [
+      "La Seine",
+      "La Loire",
+      "Le Rhône",
+      "La Garonne"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000053",
+    "category": "FRANCE",
+    "question": "Quel massif montagneux sépare la France de l'Espagne ?",
+    "choices": [
+      "Les Alpes",
+      "Les Vosges",
+      "Le Jura",
+      "Les Pyrénées"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000054",
+    "category": "FRANCE",
+    "question": "Quel département porte le numéro 14 ?",
+    "choices": [
+      "Orne",
+      "Eure",
+      "Calvados",
+      "Manche"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000055",
+    "category": "FRANCE",
+    "question": "Quelle ville est surnommée la Ville rose ?",
+    "choices": [
+      "Lille",
+      "Toulouse",
+      "Nice",
+      "Nantes"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000056",
+    "category": "MONDE DE LA NUIT",
+    "question": "Quel équipement permet au DJ de mixer deux pistes audio ?",
+    "choices": [
+      "Table de mixage",
+      "Projecteur",
+      "Micro de mesure",
+      "Amplificateur seul"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000057",
+    "category": "MONDE DE LA NUIT",
+    "question": "Que signifie BPM en musique ?",
+    "choices": [
+      "Basses par morceau",
+      "Boucles par mesure",
+      "Bits par mélodie",
+      "Battements par minute"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000058",
+    "category": "MONDE DE LA NUIT",
+    "question": "Quel appareil projette des faisceaux lumineux mobiles ?",
+    "choices": [
+      "Compresseur audio",
+      "Enceinte passive",
+      "Lyre motorisée",
+      "Caisson de basses"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000059",
+    "category": "MONDE DE LA NUIT",
+    "question": "Quel connecteur audio professionnel possède souvent trois broches ?",
+    "choices": [
+      "USB-A",
+      "XLR",
+      "HDMI",
+      "RJ45"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000060",
+    "category": "MONDE DE LA NUIT",
+    "question": "Quel métier assure la sélection musicale en soirée ?",
+    "choices": [
+      "DJ",
+      "Barman",
+      "Vestiaire",
+      "Photographe"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000061",
+    "category": "MARQUES",
+    "question": "Quelle marque utilise une pomme croquée comme logo ?",
+    "choices": [
+      "Samsung",
+      "Sony",
+      "Nokia",
+      "Apple"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000062",
+    "category": "MARQUES",
+    "question": "Quelle marque automobile fabrique la Clio ?",
+    "choices": [
+      "Citroën",
+      "Fiat",
+      "Renault",
+      "Peugeot"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000063",
+    "category": "MARQUES",
+    "question": "Quelle entreprise fabrique la console PlayStation ?",
+    "choices": [
+      "Sega",
+      "Sony",
+      "Microsoft",
+      "Nintendo"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000064",
+    "category": "MARQUES",
+    "question": "Quelle marque sportive utilise le slogan Just Do It ?",
+    "choices": [
+      "Nike",
+      "Adidas",
+      "Puma",
+      "Reebok"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000065",
+    "category": "MARQUES",
+    "question": "Quelle marque est associée à la voiture 3008 ?",
+    "choices": [
+      "Volkswagen",
+      "Ford",
+      "Opel",
+      "Peugeot"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000066",
+    "category": "QUI A DIT ÇA ?",
+    "question": "À qui attribue-t-on « Je pense, donc je suis » ?",
+    "choices": [
+      "Voltaire",
+      "Albert Camus",
+      "René Descartes",
+      "Victor Hugo"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000067",
+    "category": "QUI A DIT ÇA ?",
+    "question": "Qui a écrit « L'enfer, c'est les autres » ?",
+    "choices": [
+      "Zola",
+      "Jean-Paul Sartre",
+      "Molière",
+      "Racine"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000068",
+    "category": "QUI A DIT ÇA ?",
+    "question": "Quel astronaute a prononcé « That's one small step for man » sur la Lune ?",
+    "choices": [
+      "Neil Armstrong",
+      "Buzz Aldrin",
+      "Youri Gagarine",
+      "Michael Collins"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000069",
+    "category": "QUI A DIT ÇA ?",
+    "question": "À quel personnage est associée la phrase « Élémentaire, mon cher Watson » ?",
+    "choices": [
+      "Hercule Poirot",
+      "James Bond",
+      "Arsène Lupin",
+      "Sherlock Holmes"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000070",
+    "category": "QUI A DIT ÇA ?",
+    "question": "Qui a écrit « Liberté, Égalité, Fraternité » dans la devise française ?",
+    "choices": [
+      "Charles de Gaulle",
+      "Louis XIV",
+      "Aucun auteur unique",
+      "Napoléon Bonaparte"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000071",
+    "category": "DEVINE LE FILM/LA SÉRIE",
+    "question": "Un navire heurte un iceberg : quel film de 1997 ?",
+    "choices": [
+      "Interstellar",
+      "Titanic",
+      "Pearl Harbor",
+      "Avatar"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000072",
+    "category": "DEVINE LE FILM/LA SÉRIE",
+    "question": "Un professeur de chimie devient fabricant de méthamphétamine : quelle série ?",
+    "choices": [
+      "Breaking Bad",
+      "The Wire",
+      "Dexter",
+      "Lost"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000073",
+    "category": "DEVINE LE FILM/LA SÉRIE",
+    "question": "Des jouets prennent vie quand les humains s'absentent : quel film ?",
+    "choices": [
+      "Cars",
+      "Shrek",
+      "Monstres et Cie",
+      "Toy Story"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000074",
+    "category": "DEVINE LE FILM/LA SÉRIE",
+    "question": "Des survivants sont bloqués sur une île mystérieuse après un crash : quelle série ?",
+    "choices": [
+      "Friends",
+      "The Office",
+      "Lost",
+      "Dark"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000075",
+    "category": "DEVINE LE FILM/LA SÉRIE",
+    "question": "Un jeune sorcier reçoit une lettre pour Poudlard : quel film ?",
+    "choices": [
+      "Percy Jackson",
+      "Harry Potter à l'école des sorciers",
+      "Le Seigneur des anneaux",
+      "Narnia"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000076",
+    "category": "WTF/INSOLITE",
+    "question": "Quel animal possède trois cœurs ?",
+    "choices": [
+      "Poulpe",
+      "Dauphin",
+      "Panda",
+      "Cheval"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000077",
+    "category": "WTF/INSOLITE",
+    "question": "Quel mammifère peut voler activement ?",
+    "choices": [
+      "Écureuil volant",
+      "Koala",
+      "Hérisson",
+      "Chauve-souris"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000078",
+    "category": "WTF/INSOLITE",
+    "question": "Quel oiseau est célèbre pour imiter des sons et des voix ?",
+    "choices": [
+      "Pingouin",
+      "Flamant rose",
+      "Perroquet",
+      "Autruche"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000079",
+    "category": "WTF/INSOLITE",
+    "question": "Combien de pattes possède une araignée ?",
+    "choices": [
+      "12",
+      "8",
+      "6",
+      "10"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000080",
+    "category": "WTF/INSOLITE",
+    "question": "Quel animal est le plus grand mammifère vivant ?",
+    "choices": [
+      "Baleine bleue",
+      "Éléphant",
+      "Girafe",
+      "Hippopotame"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000081",
+    "category": "ACTUALITÉ POP CULTURE",
+    "question": "Quel film de 2023 met en scène la célèbre poupée Mattel ?",
+    "choices": [
+      "Wonka",
+      "Oppenheimer",
+      "Elemental",
+      "Barbie"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000082",
+    "category": "ACTUALITÉ POP CULTURE",
+    "question": "Quel film de 2023 retrace la vie d'un physicien lié à la bombe atomique ?",
+    "choices": [
+      "Maestro",
+      "The Creator",
+      "Oppenheimer",
+      "Napoléon"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000083",
+    "category": "ACTUALITÉ POP CULTURE",
+    "question": "Quel artiste a lancé l'Eras Tour en 2023 ?",
+    "choices": [
+      "Billie Eilish",
+      "Taylor Swift",
+      "Adele",
+      "Beyoncé"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000084",
+    "category": "ACTUALITÉ POP CULTURE",
+    "question": "Quelle série Netflix met en scène une compétition mortelle avec des jeux d'enfants ?",
+    "choices": [
+      "Squid Game",
+      "The Crown",
+      "Lupin",
+      "Wednesday"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000085",
+    "category": "ACTUALITÉ POP CULTURE",
+    "question": "Quelle console hybride Nintendo est sortie en 2017 ?",
+    "choices": [
+      "Wii U",
+      "Nintendo DS",
+      "GameCube",
+      "Nintendo Switch"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000086",
+    "category": "LE MAMBO",
+    "question": "Dans quelle commune se trouve LE MAMBO ?",
+    "choices": [
+      "Caen",
+      "Vire",
+      "Condé-en-Normandie",
+      "Flers"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000087",
+    "category": "LE MAMBO",
+    "question": "Sur quelle place se situe LE MAMBO ?",
+    "choices": [
+      "Place de la Gare",
+      "Place du Marché",
+      "Place de la République",
+      "Place Saint-Sauveur"
+    ],
+    "correctIndex": 1,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000088",
+    "category": "LE MAMBO",
+    "question": "Quel est le nom du quiz interactif du Mambo ?",
+    "choices": [
+      "BUZZQUIZ",
+      "QUIZMAX",
+      "MAMBOBINGO",
+      "TOPQUIZ"
+    ],
+    "correctIndex": 0,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000089",
+    "category": "LE MAMBO",
+    "question": "Quel est le slogan du Mambo ?",
+    "choices": [
+      "Toujours plus loin",
+      "Vivez demain",
+      "La nuit est à vous",
+      "Vibrez autrement"
+    ],
+    "correctIndex": 3,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  },
+  {
+    "id": "BQ-000090",
+    "category": "LE MAMBO",
+    "question": "Quel anniversaire LE MAMBO prépare-t-il pour 2027 ?",
+    "choices": [
+      "Ses 10 ans",
+      "Ses 20 ans",
+      "Ses 4 ans",
+      "Ses 2 ans"
+    ],
+    "correctIndex": 2,
+    "difficulty": "facile",
+    "sourceUrl": "https://fr.wikipedia.org/wiki/Accueil",
+    "verifiedAt": "2026-10-12",
+    "reviewStatus": "a_verifier"
+  }
+]
