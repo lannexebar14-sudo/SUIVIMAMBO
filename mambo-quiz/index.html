@@ -793,6 +793,15 @@ async function resetTotal(){
     const s=await getState();
     if(!s)throw Error('État du quiz introuvable');
     const code=String(Math.floor(Math.random()*10000)).padStart(4,'0');
+    // Libérer toutes les références aux joueurs AVANT leur suppression.
+    // Les sessions précédentes peuvent encore pointer vers un gagnant.
+    await db('mambo_quiz_sessions?id=not.is.null',{method:'PATCH',body:{
+      winner_player_id:null,special_winner_id:null,challenge_winner_id:null,
+      weakest_link_last_player_id:null
+    }});
+    await patchState({winner_id:null,tiebreaker_ids:null});
+    // Les tentatives du mini-jeu référencent également les joueurs.
+    await db('mambo_quiz_code_challenge_attempts?player_id=not.is.null',{method:'DELETE'});
     // En cas d'erreur réseau, recommencer les suppressions : elles sont idempotentes.
     // Vérifier ensuite le résultat en base avant d'annoncer la réussite.
     for(let attempt=1;attempt<=3;attempt++){
