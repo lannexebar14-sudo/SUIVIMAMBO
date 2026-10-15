@@ -780,7 +780,55 @@ async function confirmIntermission(){const sec=Math.max(60,Math.min(1800,Number(
 async function cancelIntermission(){const s=await getState();if(s.phase==='intermission')return endIntermissionNow();await patchState({paused_remaining:null,paused_phase:null,paused_at:null});closeIntermissionModal();toast('Entracte programmé annulé');refreshStaff()}
 async function endIntermissionNow(){const s=await getState();if(s.phase!=='intermission')return cancelIntermission();const se=await getSession(s),now=serverNowIso(),resumeSame=s.paused_phase==='resume_same',last=(s.question_index||0)+1>=(se?.question_count||0);if(resumeSame)await patchState({phase:'countdown',countdown_started_at:now,question_started_at:null,reveal_started_at:null,leaderboard_started_at:null,leaderboard_hidden:false,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.intermission');else if(last)await patchState({phase:'leaderboard',leaderboard_started_at:now,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.intermission');else await patchState({question_index:(s.question_index||0)+1,phase:'countdown',countdown_started_at:now,question_started_at:null,reveal_started_at:null,leaderboard_started_at:null,leaderboard_hidden:false,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.intermission');closeIntermissionModal();toast('Reprise du quiz');refreshStaff()}
 async function stopQuiz(){await rpc('mambo_quiz_stop_game',{});await patchState({paused_remaining:null,paused_phase:null,paused_at:null});toast('Quiz arrêté');refreshStaff()}
-async function resetTotal(){if(!confirm('RESET TOTAL : supprimer tous les joueurs, réponses, scores et classements ?'))return;clearInterval(staffPoll);const s=await getState(),code=String(Math.floor(Math.random()*10000)).padStart(4,'0');await db('mambo_quiz_answers?id=not.is.null',{method:'DELETE'});await db('mambo_quiz_players?id=not.is.null',{method:'DELETE'});if(s.current_session_id){await db(`mambo_quiz_session_questions?session_id=eq.${s.current_session_id}`,{method:'DELETE'});await db(`mambo_quiz_sessions?id=eq.${s.current_session_id}`,{method:'PATCH',body:{status:'open',game_code:code,started_at:null,finished_at:null,winner_player_id:null,question_count:50,selected_categories:null,prize_first:null,prize_second:null,prize_third:null,challenge_enabled:false,challenge_location:null,challenge_points:200,challenge_after_question:null,challenge_winner_id:null,challenge_won_at:null}})}await patchState({game_code:code,status:'waiting',phase:'lobby',question_index:0,question_started_at:null,countdown_started_at:null,reveal_started_at:null,leaderboard_started_at:null,final_started_at:null,phase_started_at:null,winner_id:null,leaderboard_hidden:false,cancelled_question:false,tiebreaker_ids:null,tiebreak_started_at:null,speed_bonus_started_at:null,speed_bonus_applied:false,paused_remaining:null,paused_phase:null,paused_at:null});toast('Reset total effectué');renderStaffShell()}
+let resetTotalInProgress=false;
+async function resetTotal(){
+  if(resetTotalInProgress)return;
+  if(!confirm('RESET TOTAL : supprimer tous les joueurs, réponses, scores et classements ?'))return;
+  resetTotalInProgress=true;
+  clearInterval(staffPoll);
+  const button=document.querySelector('.staffDanger button');
+  if(button){button.disabled=true;button.textContent='RÉINITIALISATION EN COURS…'}
+  let completed=false;
+  try{
+    const s=await getState();
+    if(!s)throw Error('État du quiz introuvable');
+    const code=String(Math.floor(Math.random()*10000)).padStart(4,'0');
+    // En cas d'erreur réseau, recommencer les suppressions : elles sont idempotentes.
+    // Vérifier ensuite le résultat en base avant d'annoncer la réussite.
+    for(let attempt=1;attempt<=3;attempt++){
+      await db('mambo_quiz_answers?id=not.is.null',{method:'DELETE'});
+      await db('mambo_quiz_players?id=not.is.null',{method:'DELETE'});
+      const [answers,players]=await Promise.all([
+        db('mambo_quiz_answers?select=id&limit=1'),
+        db('mambo_quiz_players?select=id&limit=1')
+      ]);
+      if(!answers?.length&&!players?.length)break;
+      if(attempt===3)throw Error('Des joueurs ou des réponses sont encore présents en base');
+    }
+    if(s.current_session_id){
+      await db(`mambo_quiz_session_questions?session_id=eq.${s.current_session_id}`,{method:'DELETE'});
+      await db(`mambo_quiz_sessions?id=eq.${s.current_session_id}`,{method:'PATCH',body:{status:'open',game_code:code,started_at:null,finished_at:null,winner_player_id:null,question_count:50,selected_categories:null,prize_first:null,prize_second:null,prize_third:null,challenge_enabled:false,challenge_location:null,challenge_points:200,challenge_after_question:null,challenge_winner_id:null,challenge_won_at:null}});
+      const remaining=await db(`mambo_quiz_session_questions?session_id=eq.${s.current_session_id}&select=question_id&limit=1`);
+      if(remaining?.length)throw Error('Les questions de la session précédente sont encore présentes');
+    }
+    await patchState({game_code:code,status:'waiting',phase:'lobby',question_index:0,question_started_at:null,countdown_started_at:null,reveal_started_at:null,leaderboard_started_at:null,final_started_at:null,phase_started_at:null,winner_id:null,leaderboard_hidden:false,cancelled_question:false,tiebreaker_ids:null,tiebreak_started_at:null,speed_bonus_started_at:null,speed_bonus_applied:false,paused_remaining:null,paused_phase:null,paused_at:null});
+    const verified=await getState();
+    if(!verified||verified.phase!=='lobby'||verified.status!=='waiting'||verified.game_code!==code)throw Error('La remise à zéro de la partie n’a pas été confirmée');
+    completed=true;
+    toast('Partie réinitialisée : joueurs, réponses et scores supprimés');
+  }catch(error){
+    console.error('Échec de réinitialisation BUZZQUIZ',error);
+    alert('Réinitialisation incomplète : '+(error?.message||'erreur inconnue')+'. Vérifiez la connexion puis relancez le reset.');
+  }finally{
+    resetTotalInProgress=false;
+    if(completed)renderStaffShell();
+    else{
+      if(button){button.disabled=false;button.textContent='RESET TOTAL PARTIE / SCORES'}
+      staffPoll=setInterval(refreshStaff,1800);
+      refreshStaff().catch(console.warn);
+    }
+  }
+}
 /* MAMBO STAFF WIZARD V6 — injected into the existing stable quiz engine */
 const WZ_EXTRA_CATS=['APÉRO','CINÉMA & SÉRIES','TÉLÉ & DIVERTISSEMENT','ANNÉES 80 / 90 / 2000','INTERNET & RÉSEAUX SOCIAUX','JEUX VIDÉO','FOOD & BOISSONS','PEOPLE & CÉLÉBRITÉS','FRANCE & CULTURE FRANÇAISE','MONDE DE LA NUIT','MARQUES & LOGOS','QUI A DIT ÇA ?','DEVINE LE FILM / LA SÉRIE','QUESTION WTF / INSOLITE','ACTUALITÉ POP CULTURE','LE MAMBO'];
 const WZ_GROUPS=[
