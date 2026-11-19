@@ -131,7 +131,7 @@ const writable={
   sessions:'weakest_link_enabled weakest_link_interval weakest_link_last_question weakest_link_last_player_id special_winner_id special_winner_at special_mode pending_special_mode special_mode_effective_question special_question_indices penalty_points penalize_no_answer min_score_zero',
   state:'phase question_index countdown_started_at question_started_at reveal_started_at leaderboard_started_at leaderboard_hidden paused_remaining paused_phase paused_at phase_started_at updated_at'
 };
-async function table(path,method,body,staff,device) {
+async function table(path,method,body,staff) {
   const [resource,search='']=path.split('?');
   const name=resource.replace(/^mambo_quiz_/,'');
   if (!Object.hasOwn(fields,name)) fail(404,'Route inconnue');
@@ -152,16 +152,11 @@ async function table(path,method,body,staff,device) {
     if (['select','order','limit'].includes(key)) continue;
     const match=/^(eq|gte)\.(.+)$/.exec(value);
     if (!match) fail(400,'Filtre invalide');
-    if (method==='GET' && key==='device_token' && name==='players') {
-      if (!TOKEN.test(device||'') || !equal(device,match[2])) fail(403,'Appareil non reconnu');
-      conditions.push('device_token='+bind(device));
-      continue;
-    }
     if (!cols.includes(key) || (method!=='GET' && (match[1]!=='eq' || !['id','phase','session_id','approval_status','eliminated'].includes(key)))) fail(400,'Filtre invalide');
     if (['id','session_id','player_id'].includes(key) && match[2]==='null') return [];
     conditions.push(key+(match[1]==='eq'?'=':'>=')+bind(match[2]));
   }
-  if (!staff && name==='players' && !params.has('device_token')) conditions.push("approval_status='approved'");
+  if (!staff && name==='players') conditions.push("approval_status='approved'");
   if (!staff && name==='answers') {
     conditions.push('finalized is true');
     if (display.some(key=>!['player_id','correct','created_at','response_seconds','question_index'].includes(key))) fail(403,'Données privées');
@@ -298,7 +293,14 @@ module.exports=async function handler(req,res) {
     if (req.method==='GET') {
       if (req.query.action==='snapshot') return res.json(await snapshot(req.query.player,device));
       if (req.query.action==='staff') return res.json(staff);
-      if (typeof req.query.path==='string') return res.json(await table(req.query.path,'GET',null,staff,device));
+      if (req.query.action==='recover') {
+        if (!TOKEN.test(device||'')) return res.json(null);
+        const player=await one(query,`select id from public.mambo_quiz_players
+          where session_id=${active} and device_token=$1 and approval_status<>'rejected'
+          order by joined_at desc limit 1`,[device]);
+        return res.json(player||null);
+      }
+      if (typeof req.query.path==='string') return res.json(await table(req.query.path,'GET',null,staff));
       fail(404,'Route inconnue');
     }
     if (req.method!=='POST') fail(405,'Méthode indisponible');
@@ -315,7 +317,7 @@ module.exports=async function handler(req,res) {
       if (!staff) fail(403,'Accès STAFF requis');
       return res.json(await (action==='reset'?transaction(lobby):start(body)));
     }
-    if (action==='table'&&typeof path==='string') return res.json(await table(path,method,body,staff,device));
+    if (action==='table'&&typeof path==='string') return res.json(await table(path,method,body,staff));
     if (action!=='command'||typeof path!=='string') fail(404,'Route inconnue');
     const name=path.replace(/^mambo_quiz_/,'');
     if (!Object.hasOwn(procedures,name)||procedures[name][0]==='internal') fail(404,'Commande inconnue');

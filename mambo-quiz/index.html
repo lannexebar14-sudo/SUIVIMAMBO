@@ -384,7 +384,7 @@ body{min-height:100svh!important;min-height:100dvh!important}
 </style></head><body><div id="app"><div class="page hero"><div><div class="big">LE MAMBO</div><p>Connexion au Grand Quiz…</p></div></div></div>
 <script>
 const app=document.getElementById('app');
-const APP_BUILD='20261119-quiz-neon.2';
+const APP_BUILD='20261119-quiz-neon.3';
 const _qpMode=new URLSearchParams(location.search).get('mode'),_cookiePlayer=(('; '+document.cookie).split('; mambo_player=')[1]||'').split(';')[0],_cookieDevice=(('; '+document.cookie).split('; mambo_device=')[1]||'').split(';')[0],_savedPlayer=localStorage.getItem('mambo_player')||_cookiePlayer,_savedDevice=localStorage.getItem('mambo_device')||_cookieDevice;const mode=_qpMode||(location.pathname.startsWith('/play')?'play':location.pathname.startsWith('/staff')?'staff':((_savedPlayer||_savedDevice)?'play':'tv'));
 const CATS=['ARTS & LITTÉRATURE','CALCUL','CULTURE GÉNÉRALE','GÉOGRAPHIE','HISTOIRE','LOGIQUE','MUSIQUE','NATURE & ANIMAUX','SCIENCES','SPORT','VRAI / FAUX'];
 const COUNTS=Array.from({length:20},(_,i)=>(i+1)*5),DURATIONS=[10,30,60],COUNTDOWN=5,REVEAL=8,LEADERBOARD=8;
@@ -648,10 +648,8 @@ async function recoverPlayer(silent=false){
   try{
     const token=existingDeviceToken();
     if(!token){if(!silent)toast('Aucune sauvegarde trouvée sur ce téléphone');return false}
-    const s=await getState();
-    if(!s?.current_session_id)return false;
-    const rows=await db(`mambo_quiz_players?session_id=eq.${s.current_session_id}&device_token=eq.${encodeURIComponent(token)}&select=id,approval_status&order=joined_at.desc&limit=1`);
-    if(rows?.[0]?.id&&rows[0].approval_status!=='rejected'){savePlayerId(rows[0].id);if(!silent)toast('Partie retrouvée ✅');return true}
+    const player=await quizApi('recover');
+    if(player?.id){savePlayerId(player.id);if(!silent)toast('Partie retrouvée ✅');return true}
     if(!silent)toast('Aucune partie active retrouvée');return false;
   }catch(e){console.error(e);if(!silent)toast('Impossible de retrouver la partie');return false}
 }
@@ -803,7 +801,7 @@ function renderStaffShell(){clearInterval(staffPoll);app.innerHTML=`
         <div class="staffActionCard"><div class="staffActionIcon">🔄</div><h3>Actualiser le tableau de bord</h3><p class="muted">Recharge les données sans quitter l’espace staff.</p><button class="btn alt full" onclick="refreshStaff()">ACTUALISER</button></div>
         <div class="staffActionCard"><div class="staffActionIcon">🚪</div><h3>Déconnexion staff</h3><p class="muted">Ferme la session de gestion sur cet appareil.</p><button class="btn alt full" onclick="staffLogout()">SE DÉCONNECTER</button></div>
       </div>
-      <div class="staffActionCard staffDanger" style="margin-top:14px"><div class="staffActionIcon">⚠️</div><h3>Zone dangereuse</h3><p class="muted">Ouvre une nouvelle partie et conserve la précédente dans l’historique.</p><button class="btn red" onclick="resetTotal()">RESET TOTAL PARTIE / SCORES</button></div>
+      <div class="staffActionCard staffDanger" style="margin-top:14px"><div class="staffActionIcon">⚠️</div><h3>Zone dangereuse</h3><p class="muted">Ouvre une nouvelle partie et conserve la précédente dans l’historique.</p><button class="btn red" onclick="resetTotal()">OUVRIR UNE NOUVELLE PARTIE</button></div>
     </section>
   </main>
 </div>`;staffTab(staffActiveTab||'dashboard');refreshStaff();staffPoll=setInterval(refreshStaff,1800)}
