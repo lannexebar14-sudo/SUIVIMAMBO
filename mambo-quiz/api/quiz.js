@@ -1,7 +1,15 @@
 const {Pool} = require('pg');
 const {createHmac,timingSafeEqual} = require('node:crypto');
 let pool;
-const db = () => pool ||= new Pool({connectionString:process.env.DATABASE_URL,max:3,connectionTimeoutMillis:6500,statement_timeout:10000});
+function db() {
+  if (pool) return pool;
+  if (!process.env.DATABASE_URL) fail(503,'Base du quiz indisponible');
+  const url=new URL(process.env.DATABASE_URL);
+  url.searchParams.set('sslmode','verify-full');
+  pool=new Pool({connectionString:url.toString(),max:3,connectionTimeoutMillis:6500,statement_timeout:15000});
+  pool.on('error',error=>console.error('BUZZQUIZ pool',error.code));
+  return pool;
+}
 const query = (...args) => db().query(...args);
 const one = async (run,...args) => (await run(...args)).rows[0];
 const UUID = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
@@ -44,7 +52,9 @@ const deadline=`case s.phase
   when 'code_challenge_won' then s.phase_started_at+interval '15 seconds'
   when 'code_challenge_timeout' then s.phase_started_at+interval '15 seconds'
   when 'minigame' then (select ends_at from public.mambo_quiz_minigame_runs where session_id=s.current_session_id and status in ('running','active') order by created_at desc limit 1)
-  when 'minigame_result' then s.phase_started_at+interval '3 seconds'
+  when 'minigame_result' then coalesce((select result_at from public.mambo_quiz_minigame_runs
+    where session_id=s.current_session_id and status='result' order by created_at desc limit 1),s.phase_started_at)+interval '10 seconds'
+  when 'special_winner' then s.phase_started_at
 end`;
 const due=`s.status='running' and clock_timestamp()>=coalesce(${deadline},
   case when s.phase='minigame' then clock_timestamp()-interval '1 second' end)`;
@@ -68,7 +78,18 @@ async function advance() {
           leaderboard_started_at=null,leaderboard_hidden=false,paused_remaining=null,paused_phase=null,
           paused_at=null,updated_at=now() where id=1`,[increment]);
       }
-    } else await run('select public.mambo_quiz_advance_game()');
+    } else {
+      if (s.phase!=='special_winner') await run('select public.mambo_quiz_advance_game()');
+      const winner=await one(run,`select se.id,se.special_winner_id from ${stateJoin}
+        where s.id=1 and s.status='running' and s.phase='special_winner'`);
+      if (winner?.special_winner_id) {
+        await run('select public.mambo_quiz_assign_final_ranks($1)',[winner.id]);
+        await run(`update public.mambo_quiz_sessions set status='finished',finished_at=now(),
+          winner_player_id=$2 where id=$1`,[winner.id,winner.special_winner_id]);
+        await run(`update public.mambo_quiz_state set status='finished',winner_id=$1,final_started_at=now(),
+          updated_at=now() where id=1`,[winner.special_winner_id]);
+      }
+    }
   });
 }
 const snapshotSql=`select to_jsonb(s) as state,to_jsonb(se) as session,
@@ -122,7 +143,10 @@ async function table(path,method,body,staff,device) {
   if (display.some(column=>!cols.includes(column))) fail(400,'Champ invalide');
   const conditions=[];
   if (['players','answers'].includes(name)) conditions.push('session_id='+active);
-  if (name==='sessions' && (!staff || method!=='GET')) conditions.push('id='+active);
+  if (name==='sessions') {
+    if (!staff) fail(403,'Accès STAFF requis');
+    if (method!=='GET') conditions.push('id='+active);
+  }
   if (name==='state') conditions.push('id=1');
   for (const [key,value] of params) {
     if (['select','order','limit'].includes(key)) continue;
@@ -280,6 +304,7 @@ module.exports=async function handler(req,res) {
     if (req.method!=='POST') fail(405,'Méthode indisponible');
     if (req.headers.origin&&new URL(req.headers.origin).host!==req.headers.host) fail(403,'Origine invalide');
     const {action,path,method,body={}}=req.body||{};
+    if (!body||typeof body!=='object'||Array.isArray(body)) fail(400,'Corps de requête invalide');
     if (action==='login') return res.json(login(req,res,body));
     if (action==='logout') {
       res.setHeader('Set-Cookie',cookie('',0));
