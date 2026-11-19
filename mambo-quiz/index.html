@@ -390,22 +390,23 @@ const CATS=['ARTS & LITTÉRATURE','CALCUL','CULTURE GÉNÉRALE','GÉOGRAPHIE','H
 const COUNTS=Array.from({length:20},(_,i)=>(i+1)*5),DURATIONS=[10,30,60],COUNTDOWN=5,REVEAL=8,LEADERBOARD=8;
 const PLAYER_AVATARS=['😎','🤠','🥳','🤩','😈','👻','🤖','👽','🦁','🐯','🐸','🐵','🐼','🦊','🐷','🦄'];let selectedAvatar='';
 function avatarOf(p){return esc(p?.avatar||'😎')}
-let SERVER_OFFSET_MS=0;
+let SERVER_OFFSET_MS=0, SERVER_OFFSET_TARGET=0, SERVER_CLOCK_READY=false, SERVER_CLOCK_LAST=performance.now();
+const SERVER_CLOCK_ORIGIN=Date.now()-performance.now();
 const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
 function cookieGet(n){const p=('; '+document.cookie).split('; '+n+'=');return p.length===2?decodeURIComponent(p.pop().split(';').shift()):''}function cookieSet(n,v){document.cookie=n+'='+encodeURIComponent(v)+'; Max-Age=2592000; Path=/; SameSite=Lax'}function cookieDel(n){document.cookie=n+'=; Max-Age=0; Path=/; SameSite=Lax'}function getSavedPlayerId(){return localStorage.getItem('mambo_player')||cookieGet('mambo_player')||''}function savePlayerId(id){if(!id)return;localStorage.setItem('mambo_player',id);cookieSet('mambo_player',id)}function clearSavedPlayerId(){localStorage.removeItem('mambo_player');cookieDel('mambo_player')}function existingDeviceToken(){return localStorage.getItem('mambo_device')||cookieGet('mambo_device')||''}function getDeviceToken(){let t=existingDeviceToken();if(!t){t=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));localStorage.setItem('mambo_device',t);cookieSet('mambo_device',t)}else{localStorage.setItem('mambo_device',t);cookieSet('mambo_device',t)}return t}async function quizApi(action,body,path,method){
   const headers={},device=mode==='play'?existingDeviceToken():'';
   if(device)headers['x-quiz-device']=device;
-  const started=Date.now(),query=body===undefined?'?'+new URLSearchParams({action,...(path?{path}:{}),...(action==='snapshot'&&mode==='play'&&getSavedPlayerId()?{player:getSavedPlayerId()}:{} )}):'';
+  const started=performance.now(),query=body===undefined?'?'+new URLSearchParams({action,...(path?{path}:{}),...(action==='snapshot'&&mode==='play'&&getSavedPlayerId()?{player:getSavedPlayerId()}:{} )}):'';
   if(body!==undefined)headers['Content-Type']='application/json';
   const response=await fetch('/api/quiz'+query,{method:body===undefined?'GET':'POST',headers,body:body===undefined?undefined:JSON.stringify({action,path,method,body}),signal:AbortSignal.timeout(18000)});
   const result=await response.json();
   if(!response.ok)throw Error(result?.message||'HTTP '+response.status);
-  if(action==='snapshot'&&Number.isFinite(Number(result.ms)))SERVER_OFFSET_MS=Number(result.ms)-(started+Date.now())/2;
+  if(action==='snapshot'&&Number.isFinite(Number(result.ms))){const ended=performance.now(),sample=Number(result.ms)-(SERVER_CLOCK_ORIGIN+(started+ended)/2);if(!SERVER_CLOCK_READY){SERVER_OFFSET_MS=sample;SERVER_OFFSET_TARGET=sample;SERVER_CLOCK_READY=true;SERVER_CLOCK_LAST=ended;}else if(ended-started<2000){SERVER_OFFSET_TARGET=SERVER_OFFSET_TARGET*0.8+sample*0.2;}}
   return result;
 }
 const db=(path,opt={})=>quizApi('table',opt.method?opt.body||{}:undefined,path,opt.method);
 const rpc=(name,body={})=>quizApi('command',body,name);
-function nowMs(){return Date.now()+SERVER_OFFSET_MS}
+function nowMs(){const tick=performance.now(),step=Math.max(0,tick-SERVER_CLOCK_LAST)*0.05;SERVER_CLOCK_LAST=tick;SERVER_OFFSET_MS+=Math.max(-step,Math.min(step,SERVER_OFFSET_TARGET-SERVER_OFFSET_MS));return SERVER_CLOCK_ORIGIN+tick+SERVER_OFFSET_MS}
 function serverNowIso(){return new Date(nowMs()).toISOString()}
 let snapshotPending=null;
 function getSnapshot(){
