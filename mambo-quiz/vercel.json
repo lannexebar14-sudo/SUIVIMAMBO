@@ -1,4 +1,18 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/staff",
+      "destination": "/"
+    },
+    {
+      "source": "/play",
+      "destination": "/"
+    },
+    {
+      "source": "/tv",
+      "destination": "/"
+    }
+  ]
 }

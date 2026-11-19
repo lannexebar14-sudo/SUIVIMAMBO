@@ -384,9 +384,7 @@ body{min-height:100svh!important;min-height:100dvh!important}
 </style></head><body><div id="app"><div class="page hero"><div><div class="big">LE MAMBO</div><p>Connexion au Grand Quiz…</p></div></div></div>
 <script>
 const app=document.getElementById('app');
-const APP_BUILD='20261014-quiz-v12.1-maillon-interval';
-const SB='https://otgubsvmcbaocrndngrq.supabase.co/rest/v1/';
-const KEY='sb_publishable__d50uWZVhfLcfzHv70ZOSA_QySE92AW';
+const APP_BUILD='20261119-quiz-neon';
 const _qpMode=new URLSearchParams(location.search).get('mode'),_cookiePlayer=(('; '+document.cookie).split('; mambo_player=')[1]||'').split(';')[0],_cookieDevice=(('; '+document.cookie).split('; mambo_device=')[1]||'').split(';')[0],_savedPlayer=localStorage.getItem('mambo_player')||_cookiePlayer,_savedDevice=localStorage.getItem('mambo_device')||_cookieDevice;const mode=_qpMode||(location.pathname.startsWith('/play')?'play':location.pathname.startsWith('/staff')?'staff':((_savedPlayer||_savedDevice)?'play':'tv'));
 const CATS=['ARTS & LITTÉRATURE','CALCUL','CULTURE GÉNÉRALE','GÉOGRAPHIE','HISTOIRE','LOGIQUE','MUSIQUE','NATURE & ANIMAUX','SCIENCES','SPORT','VRAI / FAUX'];
 const COUNTS=Array.from({length:20},(_,i)=>(i+1)*5),DURATIONS=[10,30,60],COUNTDOWN=5,REVEAL=8,LEADERBOARD=8;
@@ -394,13 +392,32 @@ const PLAYER_AVATARS=['😎','🤠','🥳','🤩','😈','👻','🤖','👽','�
 function avatarOf(p){return esc(p?.avatar||'😎')}
 let SERVER_OFFSET_MS=0;
 const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
-function cookieGet(n){const p=('; '+document.cookie).split('; '+n+'=');return p.length===2?decodeURIComponent(p.pop().split(';').shift()):''}function cookieSet(n,v){document.cookie=n+'='+encodeURIComponent(v)+'; Max-Age=2592000; Path=/; SameSite=Lax'}function cookieDel(n){document.cookie=n+'=; Max-Age=0; Path=/; SameSite=Lax'}function getSavedPlayerId(){return localStorage.getItem('mambo_player')||cookieGet('mambo_player')||''}function savePlayerId(id){if(!id)return;localStorage.setItem('mambo_player',id);cookieSet('mambo_player',id)}function clearSavedPlayerId(){localStorage.removeItem('mambo_player');cookieDel('mambo_player')}function existingDeviceToken(){return localStorage.getItem('mambo_device')||cookieGet('mambo_device')||''}function getDeviceToken(){let t=existingDeviceToken();if(!t){t=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));localStorage.setItem('mambo_device',t);cookieSet('mambo_device',t)}else{localStorage.setItem('mambo_device',t);cookieSet('mambo_device',t)}return t}async function db(path,opt={}){const c=new AbortController(),tm=setTimeout(()=>c.abort(),8000);try{const r=await fetch(SB+path,{method:opt.method||'GET',headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',Prefer:opt.prefer||'return=representation'},body:opt.body?JSON.stringify(opt.body):undefined,signal:c.signal});const t=await r.text();let d=null;try{d=t?JSON.parse(t):null}catch{d=t}if(!r.ok)throw Error(d?.message||'HTTP '+r.status);return d}finally{clearTimeout(tm)}}
-const rpc=(name,body={})=>db('rpc/'+name,{method:'POST',body});
-async function syncServerClock(){try{const ms=await rpc('mambo_quiz_server_now_ms',{}),n=Number(ms);if(Number.isFinite(n))SERVER_OFFSET_MS=n-Date.now()}catch(e){console.warn(e)}}
-function nowMs(){return Date.now()+SERVER_OFFSET_MS}function serverNowIso(){return new Date(nowMs()).toISOString()}
-async function getState(){return(await db('mambo_quiz_state?id=eq.1&select=*'))?.[0]}
-async function getSession(s){return(await db(`mambo_quiz_sessions?id=eq.${s.current_session_id}&select=*`))?.[0]}
-async function getQuestion(s){if(!s?.current_session_id)return null;const sq=await db(`mambo_quiz_session_questions?session_id=eq.${s.current_session_id}&position=eq.${s.question_index}&select=question_id`);if(!sq?.length)return null;return(await db(`mambo_quiz_question_bank?id=eq.${sq[0].question_id}&select=*`))?.[0]}
+function cookieGet(n){const p=('; '+document.cookie).split('; '+n+'=');return p.length===2?decodeURIComponent(p.pop().split(';').shift()):''}function cookieSet(n,v){document.cookie=n+'='+encodeURIComponent(v)+'; Max-Age=2592000; Path=/; SameSite=Lax'}function cookieDel(n){document.cookie=n+'=; Max-Age=0; Path=/; SameSite=Lax'}function getSavedPlayerId(){return localStorage.getItem('mambo_player')||cookieGet('mambo_player')||''}function savePlayerId(id){if(!id)return;localStorage.setItem('mambo_player',id);cookieSet('mambo_player',id)}function clearSavedPlayerId(){localStorage.removeItem('mambo_player');cookieDel('mambo_player')}function existingDeviceToken(){return localStorage.getItem('mambo_device')||cookieGet('mambo_device')||''}function getDeviceToken(){let t=existingDeviceToken();if(!t){t=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));localStorage.setItem('mambo_device',t);cookieSet('mambo_device',t)}else{localStorage.setItem('mambo_device',t);cookieSet('mambo_device',t)}return t}async function quizApi(action,body,path,method){
+  const headers={},device=mode==='play'?existingDeviceToken():'';
+  if(device)headers['x-quiz-device']=device;
+  const started=Date.now(),query=body===undefined?'?'+new URLSearchParams({action,...(path?{path}:{}),...(action==='snapshot'&&mode==='play'&&getSavedPlayerId()?{player:getSavedPlayerId()}:{} )}):'';
+  if(body!==undefined)headers['Content-Type']='application/json';
+  const response=await fetch('/api/quiz'+query,{method:body===undefined?'GET':'POST',headers,body:body===undefined?undefined:JSON.stringify({action,path,method,body}),signal:AbortSignal.timeout(18000)});
+  const result=await response.json();
+  if(!response.ok)throw Error(result?.message||'HTTP '+response.status);
+  if(action==='snapshot'&&Number.isFinite(Number(result.ms)))SERVER_OFFSET_MS=Number(result.ms)-(started+Date.now())/2;
+  return result;
+}
+const db=(path,opt={})=>quizApi('table',opt.method?opt.body||{}:undefined,path,opt.method);
+const rpc=(name,body={})=>quizApi('command',body,name);
+function nowMs(){return Date.now()+SERVER_OFFSET_MS}
+function serverNowIso(){return new Date(nowMs()).toISOString()}
+let snapshotPending=null;
+function getSnapshot(){
+  if(!snapshotPending)snapshotPending=quizApi('snapshot').then(data=>{
+    Object.defineProperty(data.state,'snapshot',{value:data});
+    return data;
+  }).finally(()=>{snapshotPending=null});
+  return snapshotPending;
+}
+async function getState(){return (await getSnapshot()).state}
+async function getSession(s){return s?.snapshot?.session||null}
+async function getQuestion(s){return s?.snapshot?.question||null}
 async function patchState(body,guard=''){return db('mambo_quiz_state?id=eq.1'+guard,{method:'PATCH',body:{...body,updated_at:serverNowIso()}})}
 function secSince(ts){return ts?Math.max(0,(nowMs()-new Date(ts).getTime())/1000):0}
 function toast(m){let e=document.createElement('div');e.className='toast';e.textContent=m;document.body.appendChild(e);setTimeout(()=>e.remove(),2200)}
@@ -421,11 +438,6 @@ async function loadTvSlides(force=false){
     if(tvSlideIndex>=TV_SLIDES.length)tvSlideIndex=0;
     return before!==version||force;
   }catch(e){console.warn('tv slideshow',e);return false}
-}
-function staffWriteCode(){
-  let code=sessionStorage.getItem('mambo_staff_code')||'';
-  if(!code){code=prompt('Entre le code staff pour confirmer cette modification')||'';if(code)sessionStorage.setItem('mambo_staff_code',code)}
-  return code;
 }
 async function compressWaitingImage(file){
   if(!file||!file.type.startsWith('image/'))throw Error('Choisis une image JPG, PNG ou WEBP');
@@ -466,20 +478,19 @@ async function loadStaffTvSlides(){
   const el=document.getElementById('tvSlidesCurrent'),msg=document.getElementById('tvWaitMsg');if(!el)return;
   try{
     const raw=await rpc('mambo_quiz_tv_slides_get',{}),rows=Array.isArray(raw)?raw:[];
-    el.innerHTML=rows.map((s,i)=>`<div class="staffSlideCard"><button class="staffSlideDelete" onclick="removeTvSlide('${s.id}')">×</button><img src="${s.image_data}" alt="Image ${i+1}"><div class="staffSlideMeta">${i+1}. ${esc(s.file_name||'Image')}</div></div>`).join('')||'<div class="staffWaitingEmpty" style="grid-column:1/-1">AUCUNE IMAGE<br><span class="muted" style="font-size:12px">Ajoute des visuels pour démarrer le diaporama TV.</span></div>';
+    el.innerHTML=rows.map((s,i)=>`<div class="staffSlideCard"><button class="staffSlideDelete" onclick="removeTvSlide('${s.id}')">×</button><img src="${esc(s.image_data)}" alt="Image ${i+1}"><div class="staffSlideMeta">${i+1}. ${esc(s.file_name||'Image')}</div></div>`).join('')||'<div class="staffWaitingEmpty" style="grid-column:1/-1">AUCUNE IMAGE<br><span class="muted" style="font-size:12px">Ajoute des visuels pour démarrer le diaporama TV.</span></div>';
     if(msg)msg.textContent=rows.length?rows.length+' image'+(rows.length>1?'s':'')+' dans le diaporama • 15 secondes par image.':'Aucune image enregistrée.';
   }catch(e){console.error(e);if(msg)msg.textContent='Impossible de charger le diaporama.'}
 }
 async function saveTvWaitingImages(){
   const msg=document.getElementById('tvWaitMsg');
   if(!STAFF_PENDING_SLIDES.length){if(msg)msg.textContent='Sélectionne d’abord une ou plusieurs images.';return}
-  const code=staffWriteCode();if(!code)return;
   if(msg)msg.textContent='Enregistrement du diaporama…';
   try{
     const pending=[...STAFF_PENDING_SLIDES];
     for(let i=0;i<pending.length;i++){
       if(msg)msg.textContent='Enregistrement '+(i+1)+'/'+pending.length+'…';
-      await rpc('mambo_quiz_tv_slide_add',{p_staff_code:code,p_file_name:pending[i].name,p_image_data:pending[i].data});
+      await rpc('mambo_quiz_tv_slide_add',{p_file_name:pending[i].name,p_image_data:pending[i].data});
     }
     STAFF_PENDING_SLIDES=[];renderStaffPendingSlides();TV_SLIDES_CHECK=0;TV_SLIDES_VERSION='';
     if(msg)msg.textContent='✅ Images ajoutées. Le diaporama TV se met à jour automatiquement.';
@@ -488,10 +499,9 @@ async function saveTvWaitingImages(){
 }
 async function removeTvSlide(id){
   if(!confirm('Supprimer cette image du diaporama ?'))return;
-  const code=staffWriteCode();if(!code)return;
   const msg=document.getElementById('tvWaitMsg');
   try{
-    await rpc('mambo_quiz_tv_slide_delete',{p_staff_code:code,p_slide_id:id});
+    await rpc('mambo_quiz_tv_slide_delete',{p_slide_id:id});
     TV_SLIDES_CHECK=0;TV_SLIDES_VERSION='';
     if(msg)msg.textContent='Image supprimée.';
     await loadStaffTvSlides();
@@ -499,10 +509,9 @@ async function removeTvSlide(id){
 }
 async function clearTvSlides(){
   if(!confirm('Supprimer toutes les images du diaporama TV ?'))return;
-  const code=staffWriteCode();if(!code)return;
   const msg=document.getElementById('tvWaitMsg');
   try{
-    await rpc('mambo_quiz_tv_slides_clear',{p_staff_code:code});
+    await rpc('mambo_quiz_tv_slides_clear',{});
     TV_SLIDES=[];TV_SLIDES_CHECK=0;TV_SLIDES_VERSION='';tvSlideIndex=0;
     if(msg)msg.textContent='Toutes les images ont été supprimées.';
     await loadStaffTvSlides();
@@ -525,7 +534,7 @@ function startTvSlideshow(s){
 function correctSet(q){const a=Array.isArray(q?.correct_indices)?q.correct_indices:[q?.correct_index];return a.map(Number).filter(Number.isInteger)}function correctText(q){return correctSet(q).map(i=>q?.answers?.[i]).filter(Boolean).join(' + ')}function specialBadge(q){const m={trap:['😈 QUESTION PIÈGE — QUESTION INVERSÉE','Cherche la réponse qui n’appartient PAS / qui est fausse.'],multi:['🔥 RÉPONSES MULTIPLES','Plusieurs choix sont possibles — sélectionne exactement 2 réponses.'],intruder:['👀 TROUVE L’INTRUS','Une seule réponse est l’intrus.'],true_false:['⚡ VRAI OU FAUX','']};const x=m[q?.question_type];return x?`<div style="margin:10px 0 8px"><div class="pill" style="display:inline-block">${x[0]}</div><div class="muted" style="margin-top:6px;font-weight:700">${x[1]}</div></div>`:''}function tvLobby(s){
   if(TV_SLIDES.length){
     const slide=TV_SLIDES[Math.min(tvSlideIndex,TV_SLIDES.length-1)]||TV_SLIDES[0];
-    return`<div class="tvWaitingPage"><img id="tvSlideBg" class="tvWaitingBg" src="${slide.image_data}" alt="Diaporama d’attente"><div class="tvWaitingShade"></div><div class="tvWaitingTop"><div class="brand">LE MAMBO • GRAND QUIZ</div><div><div class="pill">BIENTÔT LE DÉPART</div><div id="tvSlideCount" class="tvSlideCounter">${tvSlideIndex+1} / ${TV_SLIDES.length} • 15 S</div></div></div><div class="tvWaitingJoin"><img src="${QR}" alt="QR code espace joueur"><div><div class="joinLabel">REJOINDRE LA PARTIE</div><div class="joinCode">${esc(s.game_code)}</div><div class="joinHint">Scanne le QR code avec ton téléphone • quizz.lemambo.fr</div></div></div></div>`;
+    return`<div class="tvWaitingPage"><img id="tvSlideBg" class="tvWaitingBg" src="${esc(slide.image_data)}" alt="Diaporama d’attente"><div class="tvWaitingShade"></div><div class="tvWaitingTop"><div class="brand">LE MAMBO • GRAND QUIZ</div><div><div class="pill">BIENTÔT LE DÉPART</div><div id="tvSlideCount" class="tvSlideCounter">${tvSlideIndex+1} / ${TV_SLIDES.length} • 15 S</div></div></div><div class="tvWaitingJoin"><img src="${QR}" alt="QR code espace joueur"><div><div class="joinLabel">REJOINDRE LA PARTIE</div><div class="joinCode">${esc(s.game_code)}</div><div class="joinHint">Scanne le QR code avec ton téléphone • quizz.lemambo.fr</div></div></div></div>`;
   }
   return`<div class="page"><div class="top"><div class="brand">LE MAMBO</div><div class="pill">GRAND QUIZ</div></div><div class="hero"><div><div class="big">REJOINS LA PARTIE</div><div class="qr-card"><img src="${QR}" alt="QR code espace joueur"><div class="qr-title">SCAN & JOUE</div><div class="qr-sub">Ouvre directement l'espace joueur</div></div><div class="code">${esc(s.game_code)}</div><p>Scanne le QR code avec ton téléphone ou va sur <b>quizz.lemambo.fr/?mode=play</b></p></div></div></div>`
 }
@@ -610,18 +619,72 @@ async function personalQuizStats(s,p){
 let tvKey='',tvTimer=null,tvPoll=null,busyAdvance=false;
 async function renderTV(s){const se=await getSession(s),q=await getQuestion(s),phase=s.phase||'lobby',qstats=phase==='reveal'?await questionStats(s):null;let html='';if(['lobby','waiting','stopped'].includes(phase)||s.status==='waiting'){await loadTvSlides(false);html=tvLobby(s);}else if(phase==='intermission')html=`<div class="page hero"><div><div class="brand">LE MAMBO • GRAND QUIZ</div><h1 class="big">ENTRACTE</h1><div id="tvBreak" class="mega" style="font-size:clamp(70px,14vw,180px)">${formatBreakTime(breakSecondsLeft(s))}</div><p class="muted">Le quiz reprend automatiquement à la fin du compte à rebours.</p></div></div>`;else if(phase==='countdown')html=`<div class="page hero"><div style="width:min(1100px,94vw)"><div class="brand">LE MAMBO • GRAND QUIZ</div><h1 style="margin:18px 0 8px">PROCHAINE QUESTION</h1><div id="tvCount" class="mega">${COUNTDOWN}</div><div style="font-size:clamp(26px,3.2vw,48px);font-weight:1000;margin:14px auto 16px;line-height:1;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis">${esc(q?.category||'QUESTION SURPRISE')}</div><p>Question ${(s.question_index||0)+1} / ${se?.question_count||0}</p></div></div>`;else if(phase==='question'&&q)html=`<div class="page tvQuestionPage"><div class="top"><div class="brand">LE MAMBO • GRAND QUIZ</div><div class="pill">QUESTION ${(s.question_index||0)+1}/${se?.question_count||0}</div></div><div style="text-align:center"><div id="tvTime" class="timer">${se?.question_duration||60}</div>${specialBadge(q)}<div class="questionText">${esc(q.question)}</div><div class="answers tvAnswersCount${Math.min(4,(q.answers||[]).length)}">${(q.answers||[]).map((a,i)=>`<div class="answer">${i+1}. ${esc(a)}</div>`).join('')}</div></div></div>`;else if(phase==='reveal'&&q)html=`<div class="page hero revealTVPage"><div style="width:100%;text-align:center"><div class="brand">BONNE RÉPONSE</div><div class="winner-glow" style="margin:18px auto">✅ ${esc(correctText(q))}</div>${answerStatHtml(qstats)}<div class="questionText" style="font-size:clamp(20px,3vw,42px)">${esc(q.question)}</div><div class="answers tvAnswersCount${Math.min(4,(q.answers||[]).length)}">${(q.answers||[]).map((a,i)=>`<div class="answer ${correctSet(q).includes(i)?'correct':''}">${i+1}. ${esc(a)}</div>`).join('')}</div></div></div>`;else if(phase==='leaderboard'&&s.leaderboard_hidden)html=`<div class="page hero"><div><div class="brand">LE MAMBO • GRAND QUIZ</div><h1>PROCHAINE QUESTION</h1><div id="tvBetween" class="timer">0</div><p class="muted">Classement toutes les 5 questions.</p></div></div>`;else if(phase==='leaderboard'){const rows=await leaderboard(s,10);html=`<div class="page"><div class="top"><div class="brand">LE MAMBO • GRAND QUIZ</div><div class="pill">CLASSEMENT</div></div><div style="text-align:center"><div class="big" style="margin-top:18px">CLASSEMENT</div>${renderPodium(rows)}<div class="tv-ranks">${rows.slice(3,10).map((p,i)=>`<div class="tv-rank" style="animation-delay:${i*.05}s"><div class="n">#${i+4}</div><div class="name"><span class="avatar-inline">${avatarOf(p)}</span>${esc(p.nickname)}</div><div class="pts">${p.score||0} pts</div></div>`).join('')}</div><div style="margin-top:18px"><div class="label">PROCHAINE QUESTION DANS</div><div id="tvBetween" class="timer">0</div></div></div></div>`}else if(phase==='final'||s.status==='finished'){const rows=await leaderboard(s,10),w=rows[0];html=`<div class="page"><div class="top"><div class="brand">LE MAMBO • GRAND QUIZ</div><div class="pill">RÉSULTATS</div></div><div style="text-align:center"><div class="winner-glow" style="margin-top:26px">🏆 ${w?avatarOf(w)+' '+esc(w.nickname):'FIN DU QUIZ'}</div>${w?`<div class="podscore">${w.score||0} POINTS</div>`:''}${renderPodium(rows)}${renderPrizes(se,rows)}<div class="tv-ranks">${rows.slice(3,8).map((p,i)=>`<div class="tv-rank"><div class="n">#${i+4}</div><div class="name"><span class="avatar-inline">${avatarOf(p)}</span>${esc(p.nickname)}</div><div class="pts">${p.score||0} pts</div></div>`).join('')}</div></div></div>`}else html=tvLobby(s);const showJoinBar=s.status==='running'&&!['lobby','waiting','stopped','final'].includes(phase);if(showJoinBar)html+=tvJoinFooter(s);app.innerHTML=html;startTVClock(s,se);startTvSlideshow(s)}
 function setRoundTimer(id,left,total,size='phone'){const e=document.getElementById(id);if(!e)return;left=Math.max(0,Math.ceil(Number(left)||0));total=Math.max(1,Number(total)||1);e.textContent=left;e.classList.add('chronoRing');e.classList.toggle('chronoTV',size==='tv');e.classList.toggle('chronoPhone',size==='phone');e.classList.toggle('chronoMini',size==='mini');const pct=Math.min(100,Math.max(0,(1-left/total)*100)),warn=Math.max(6,Math.min(10,Math.ceil(total/3))),color=left<=5?'#ff3b5c':left<=warn?'#ff9f1a':'#7c4dff';e.style.setProperty('--p',pct+'%');e.style.setProperty('--ring',color);e.style.boxShadow='0 0 34px '+(left<=5?'#ff3b5c66':left<=warn?'#ff9f1a55':'#7c4dff55')+',inset 0 0 18px #0008';e.classList.toggle('danger',left>0&&left<=5)}function updateTVClockNow(s,se){if(s.phase==='intermission'){const e=document.getElementById('tvBreak');if(e)e.textContent=formatBreakTime(breakSecondsLeft(s))}if(s.phase==='countdown'){const left=Math.max(0,COUNTDOWN-secSince(s.countdown_started_at||s.phase_started_at));setRoundTimer('tvCount',left,COUNTDOWN,'tv')}if(s.phase==='question'){const total=se?.question_duration||60,left=Math.max(0,total-secSince(s.question_started_at));setRoundTimer('tvTime',left,total,'tv')}if(s.phase==='leaderboard'){const e=document.getElementById('tvBetween');if(e){const between=Math.max(0,Number(se?.between_question_duration??10));e.textContent=Math.max(0,Math.ceil(between-secSince(s.leaderboard_started_at||s.phase_started_at)))}}}function startTVClock(s,se){clearInterval(tvTimer);updateTVClockNow(s,se);tvTimer=setInterval(()=>updateTVClockNow(s,se),200)}
-async function advanceGame(s){if(busyAdvance)return;busyAdvance=true;try{const se=await getSession(s),duration=se?.question_duration||60,between=Math.max(0,Number(se?.between_question_duration??10)),revealDelay=REVEAL,leaderboardDelay=between,now=serverNowIso();if(s.phase==='intermission'){const total=Math.max(0,Number(s.paused_remaining||0));if(total<=0||secSince(s.paused_at||s.phase_started_at)>=total){const resumeSame=s.paused_phase==='resume_same',last=(s.question_index||0)+1>=(se?.question_count||0);if(resumeSame)await patchState({phase:'countdown',countdown_started_at:now,question_started_at:null,reveal_started_at:null,leaderboard_started_at:null,leaderboard_hidden:false,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.intermission');else if(last)await patchState({phase:'leaderboard',leaderboard_started_at:now,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.intermission');else await patchState({question_index:(s.question_index||0)+1,phase:'countdown',countdown_started_at:now,question_started_at:null,reveal_started_at:null,leaderboard_started_at:null,leaderboard_hidden:false,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.intermission')}return}if(s.phase==='countdown'&&secSince(s.countdown_started_at||s.phase_started_at)>=COUNTDOWN)await patchState({phase:'question',question_started_at:now,phase_started_at:now},'&phase=eq.countdown');else if(s.phase==='question'&&secSince(s.question_started_at)>=duration){await rpc('mambo_quiz_finalize_question',{p_question:s.question_index});await patchState({phase:'reveal',reveal_started_at:now,phase_started_at:now},'&phase=eq.question')}else if(s.phase==='reveal'&&secSince(s.reveal_started_at||s.phase_started_at)>=revealDelay){const showBoard=(((s.question_index||0)+1)%5===0)||(((s.question_index||0)+1)>=(se?.question_count||0));await patchState({phase:'leaderboard',leaderboard_hidden:!showBoard,leaderboard_started_at:now,phase_started_at:now},'&phase=eq.reveal');}else if(s.phase==='leaderboard'&&secSince(s.leaderboard_started_at||s.phase_started_at)>=leaderboardDelay){const last=(s.question_index||0)+1>=(se?.question_count||0);if(last){if(!s.speed_bonus_applied){await rpc('mambo_quiz_apply_speed_bonus',{p_session:s.current_session_id});await patchState({speed_bonus_applied:true,speed_bonus_started_at:now},'&phase=eq.leaderboard')}const rows=await leaderboard(s,2),winner=rows[0]?.id||null;await patchState({status:'finished',phase:'final',final_started_at:now,phase_started_at:now,winner_id:winner},'&phase=eq.leaderboard');await db(`mambo_quiz_sessions?id=eq.${s.current_session_id}`,{method:'PATCH',body:{status:'finished',finished_at:now,winner_player_id:winner}})}else if(s.paused_phase==='pending_break'&&Number(s.paused_remaining)>0)await patchState({phase:'intermission',paused_phase:'resume_increment',paused_at:now,phase_started_at:now,leaderboard_hidden:false},'&phase=eq.leaderboard');else await patchState({question_index:(s.question_index||0)+1,phase:'countdown',countdown_started_at:now,question_started_at:null,reveal_started_at:null,leaderboard_started_at:null,leaderboard_hidden:false,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.leaderboard')}}catch(e){console.error(e)}finally{busyAdvance=false}}
-async function tvTick(){try{let s=await getState();if(!s)return;const seen=[s.phase,s.question_index,s.status,s.current_session_id].join('|');if(seen!==tvKey){tvKey=seen;await renderTV(s);return}if(['lobby','waiting','stopped'].includes(s.phase)||s.status==='waiting'){const changed=await loadTvSlides(false);if(changed){tvSlideIndex=0;await renderTV(s);return}}await advanceGame(s);s=await getState();const key=[s.phase,s.question_index,s.status,s.current_session_id].join('|');if(key!==tvKey){tvKey=key;await renderTV(s)}else{const se=await getSession(s);updateTVClockNow(s,se)}}catch(e){console.error(e)}}async function tv(){await tvTick();tvPoll=setInterval(tvTick,750)}
+let tvBusy=false;
+async function tvTick(){
+  if(tvBusy)return;
+  tvBusy=true;
+  try{
+    const s=await getState(),key=[s.phase,s.question_index,s.status,s.current_session_id,s.updated_at].join('|');
+    const slidesChanged=(['lobby','waiting','stopped'].includes(s.phase)||s.status==='waiting')&&await loadTvSlides(false);
+    if(slidesChanged)tvSlideIndex=0;
+    if(key!==tvKey||slidesChanged){await renderTV(s);tvKey=key}
+    else updateTVClockNow(s,await getSession(s));
+  }catch(e){console.error(e)}finally{tvBusy=false}
+}
+async function tv(){await tvTick();tvPoll=setInterval(tvTick,1100)}
 let playerPoll=null,playerKey='',answering=false,multiSelected=[];function playJoin(){selectedAvatar='';app.innerHTML=`<div class="phone"><div class="box"><div class="brand">LE MAMBO</div><h1>REJOINDRE LE QUIZ</h1><input id="game" class="input" inputmode="numeric" maxlength="4" placeholder="CODE À 4 CHIFFRES"><input id="nick" class="input" maxlength="18" placeholder="TON PSEUDO"><div class="avatar-title">CHOISIS TON AVATAR</div><div class="avatar-grid">${PLAYER_AVATARS.map((a,i)=>`<button type="button" class="avatar-btn" id="av${i}" onclick="chooseAvatar(${i})" aria-label="Avatar ${i+1}">${a}</button>`).join('')}</div><button id="join" class="btn full">REJOINDRE</button><button id="recover" class="btn alt full">RETROUVER MA PARTIE</button><div id="msg" class="muted" style="margin-top:10px"></div></div></div>`;document.getElementById('join').onclick=joinGame;document.getElementById('recover').onclick=recoverGame}
 function chooseAvatar(i){selectedAvatar=PLAYER_AVATARS[i]||'';document.querySelectorAll('.avatar-btn').forEach((b,j)=>b.classList.toggle('on',j===i));const m=document.getElementById('msg');if(m)m.textContent=''}
-async function joinGame(){const b=document.getElementById('join');b.disabled=true;try{const s=await getState(),g=document.getElementById('game').value.trim(),n=document.getElementById('nick').value.trim();if(g!==String(s.game_code))throw Error('Code incorrect');if(!n)throw Error('Entre un pseudo');if(!selectedAvatar)throw Error('Choisis ton avatar');const d=await db('mambo_quiz_players?select=*',{method:'POST',body:{nickname:n,avatar:selectedAvatar,approval_status:'pending',session_id:s.current_session_id,device_token:getDeviceToken()}});savePlayerId(d[0].id);startPlayer()}catch(e){document.getElementById('msg').textContent=e.message;b.disabled=false}}
-async function recoverPlayer(silent=false){try{const saved=getSavedPlayerId();if(saved){localStorage.setItem('mambo_player',saved);return true}const token=existingDeviceToken();if(!token){if(!silent)toast('Aucune sauvegarde trouvée sur ce téléphone');return false}const s=await getState();if(!s?.current_session_id)return false;const rows=await db(`mambo_quiz_players?session_id=eq.${s.current_session_id}&device_token=eq.${encodeURIComponent(token)}&select=id,approval_status&order=joined_at.desc&limit=1`);if(rows?.[0]?.id){savePlayerId(rows[0].id);if(!silent)toast('Partie retrouvée ✅');return true}if(!silent)toast('Aucune partie active retrouvée');return false}catch(e){console.error(e);if(!silent)toast('Impossible de retrouver la partie');return false}}async function recoverGame(){const ok=await recoverPlayer(false);if(ok)startPlayer()}async function playerData(id,s){const p=(await db(`mambo_quiz_players?id=eq.${id}&select=*`))?.[0];if(!p||p.session_id!==s.current_session_id)return{p:null};if(!p.device_token){try{const t=getDeviceToken();await db(`mambo_quiz_players?id=eq.${id}`,{method:'PATCH',body:{device_token:t}});p.device_token=t}catch(e){console.warn('device bind',e)}}const se=await getSession(s),q=await getQuestion(s),started=se?.started_at||'1970-01-01T00:00:00Z',ans=(await db(`mambo_quiz_answers?player_id=eq.${id}&session_id=eq.${s.current_session_id}&question_index=eq.${s.question_index}&created_at=gte.${encodeURIComponent(started)}&select=*&order=created_at.desc&limit=1`))?.[0];return{p,se,q,ans}}
+async function joinGame(){
+  const b=document.getElementById('join');b.disabled=true;
+  try{
+    const code=document.getElementById('game').value.trim(),nickname=document.getElementById('nick').value.trim();
+    getDeviceToken();
+    const player=await quizApi('join',{code,nickname,avatar:selectedAvatar});
+    savePlayerId(player.id);startPlayer();
+  }catch(e){document.getElementById('msg').textContent=e.message;b.disabled=false}
+}
+async function recoverPlayer(silent=false){
+  try{
+    const token=existingDeviceToken();
+    if(!token){if(!silent)toast('Aucune sauvegarde trouvée sur ce téléphone');return false}
+    const s=await getState();
+    if(!s?.current_session_id)return false;
+    const rows=await db(`mambo_quiz_players?session_id=eq.${s.current_session_id}&device_token=eq.${encodeURIComponent(token)}&select=id,approval_status&order=joined_at.desc&limit=1`);
+    if(rows?.[0]?.id&&rows[0].approval_status!=='rejected'){savePlayerId(rows[0].id);if(!silent)toast('Partie retrouvée ✅');return true}
+    if(!silent)toast('Aucune partie active retrouvée');return false;
+  }catch(e){console.error(e);if(!silent)toast('Impossible de retrouver la partie');return false}
+}
+async function recoverGame(){if(await recoverPlayer(false))startPlayer()}
 async function renderPlayer(s,d){multiSelected=[];const{p,se,q,ans}=d,qstats=s.phase==='reveal'?await questionStats(s):null;if(!p){clearSavedPlayerId();if(await recoverPlayer(true)){startPlayer();return}playJoin();return}if(p.approval_status==='pending'){app.innerHTML=`<div class="phone"><div class="box"><h1>⏳ EN ATTENTE</h1><p>Le staff doit valider ta participation.</p><div class="avatar-hero">${avatarOf(p)}</div><p class="muted">${esc(p.nickname)}</p></div></div>`;return}if(p.approval_status!=='approved'){app.innerHTML=`<div class="phone"><div class="box"><h1>PARTICIPATION NON VALIDÉE</h1><button class="btn full" onclick="clearSavedPlayerId();location.reload()">REVENIR</button></div></div>`;return}if(['lobby','waiting','stopped'].includes(s.phase)||s.status==='waiting'){app.innerHTML=`<div class="phone"><div class="box"><h1>✅ TU ES VALIDÉ(E)</h1><p>Le quiz va bientôt commencer.</p><div class="avatar-hero">${avatarOf(p)}</div><h2>${esc(p.nickname)}</h2><p class="muted">${p.score||0} pts</p></div></div>`;return}if(s.phase==='intermission'){app.innerHTML=`<div class="phone"><div class="box"><div class="brand">LE MAMBO • GRAND QUIZ</div><h1>ENTRACTE</h1><div id="pBreak" class="code" style="font-size:clamp(54px,18vw,92px)">${formatBreakTime(breakSecondsLeft(s))}</div><p class="muted">Profite de la pause. La prochaine question démarrera automatiquement.</p></div></div>`;startPlayerClock(s,se);return}if(s.phase==='countdown'){app.innerHTML=`<div class="phone"><div class="box"><h2 style="margin-bottom:8px">PROCHAINE QUESTION</h2><div id="pCount" class="mega">${COUNTDOWN}</div><div style="margin:12px auto 14px;font-size:clamp(17px,5vw,28px);font-weight:1000;line-height:1;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis">${esc(q?.category||'QUESTION SURPRISE')}</div><p class="muted">Question ${(s.question_index||0)+1}/${se?.question_count||0}</p></div></div>`;startPlayerClock(s,se);return}if(s.phase==='question'&&q){app.innerHTML=`<div class="phone phoneQuestionPage"><div class="box"><div class="top"><b>Q ${(s.question_index||0)+1}/${se?.question_count||0}</b><b id="pTime">${se?.question_duration||60}s</b></div>${specialBadge(q)}<h2>${esc(q.question)}</h2>${ans?`<div><div class="savedChoiceTag">✓ CHOIX ENREGISTRÉ</div><div class="savedChoices">${(q.answers||[]).map((a,i)=>{const picked=(Array.isArray(ans?.answer_indices)&&ans.answer_indices.length?ans.answer_indices:[ans?.answer_index]).map(Number).includes(i);return `<div class="savedChoice ${picked?'chosen':'dim'}">${i+1}. ${esc(a)}</div>`}).join('')}</div><p class="muted" style="margin-top:16px">En attente de la correction…</p></div>`:`<div class="phoneAnswers">${(q.answers||[]).map((a,i)=>`<button class="btn alt phoneAnswer" id="pa${i}" onclick="pickAnswer(${i})">${i+1}. ${esc(a)}</button>`).join('')}</div>`}</div></div>`;startPlayerClock(s,se);return}if(s.phase==='reveal'&&q){const good=ans?.correct;app.innerHTML=`<div class="phone"><div class="box"><h1 class="${good?'good':'bad'}">${good?'BONNE RÉPONSE !':'MAUVAISE RÉPONSE'}</h1><h2>${esc(correctText(q))}</h2>${answerStatHtml(qstats)}${good?`<p>+${ans.pending_points||ans.points_awarded||0} points</p>`:'<p>0 point</p>'}<p class="muted">Score actuel : ${p.score||0} pts</p></div></div>`;return}if(s.phase==='leaderboard'&&s.leaderboard_hidden){app.innerHTML=`<div class="phone"><div class="box"><h1>QUESTION SUIVANTE</h1><h2>${p.score||0} pts</h2><p class="muted">Le classement revient toutes les 5 questions.</p></div></div>`;return}if(s.phase==='leaderboard'){const rows=await leaderboard(s,100),rank=rows.findIndex(x=>x.id===p.id)+1;app.innerHTML=`<div class="phone"><div class="box"><h1>CLASSEMENT</h1><div class="avatar-hero">${avatarOf(p)}</div><div class="code">#${rank||'-'}</div><h2>${p.score||0} pts</h2><p class="muted">Prochaine question bientôt…</p></div></div>`;return}if(s.phase==='final'||s.status==='finished'){const rows=await leaderboard(s,100),rank=rows.findIndex(x=>x.id===p.id)+1,prize=rank===1?se?.prize_first:rank===2?se?.prize_second:rank===3?se?.prize_third:null;app.innerHTML=`<div class="phone"><div class="box"><h1>FIN DU QUIZ</h1><div class="code">#${rank||'-'}</div><h2>${p.score||0} pts</h2>${p.speed_bonus?`<p class="good">Bonus rapidité : +${p.speed_bonus} pts</p>`:''}${prize?`<div class="box" style="margin-top:14px"><div class="label">TON LOT</div><h2>🎁 ${esc(prize)}</h2></div>`:''}<p>Merci d'avoir joué !</p></div></div>`}}
 function startPlayerClock(s,se){clearInterval(window._pclock);const upd=()=>{if(s.phase==='intermission'){const e=document.getElementById('pBreak');if(e)e.textContent=formatBreakTime(breakSecondsLeft(s))}if(s.phase==='countdown'){const left=Math.max(0,COUNTDOWN-secSince(s.countdown_started_at||s.phase_started_at));setRoundTimer('pCount',left,COUNTDOWN,'phone')}if(s.phase==='question'){const total=se?.question_duration||60,left=Math.max(0,total-secSince(s.question_started_at));setRoundTimer('pTime',left,total,'mini')}};upd();window._pclock=setInterval(upd,200)}
-async function submitAnswers(arr){if(answering)return;answering=true;try{const id=getSavedPlayerId();if(id&&!localStorage.getItem('mambo_player'))localStorage.setItem('mambo_player',id);const s=await getState(),se=await getSession(s),left=Math.max(0,Math.ceil((se?.question_duration||60)-secSince(s.question_started_at)));const r=await rpc('mambo_quiz_submit_answers',{p_player:id,p_question:s.question_index,p_answers:arr,p_base_points:100,p_seconds_left:left});if(Number(r)===-3)throw Error('Sélectionne exactement le bon nombre de réponses');await playerTick(true)}catch(e){toast(e.message)}finally{answering=false}}async function sendAnswer(i){return submitAnswers([i])}async function pickAnswer(i){if(answering)return;const s=await getState(),q=await getQuestion(s);if(q?.question_type!=='multi')return sendAnswer(i);const k=multiSelected.indexOf(i);if(k>=0)multiSelected.splice(k,1);else if(multiSelected.length<2)multiSelected.push(i);else return toast('2 réponses maximum');document.querySelectorAll('.phoneAnswer').forEach((b,j)=>{const on=multiSelected.includes(j);b.style.outline=on?'3px solid #ffd45a':'';b.style.transform=on?'scale(1.02)':''});let v=document.getElementById('multiValidate');if(!v){v=document.createElement('button');v.id='multiValidate';v.className='btn green full';v.textContent='VALIDER MES 2 RÉPONSES';v.onclick=validateMulti;document.querySelector('.phoneAnswers')?.insertAdjacentElement('afterend',v)}v.disabled=multiSelected.length!==2}async function validateMulti(){if(multiSelected.length!==2)return toast('Sélectionne 2 réponses');await submitAnswers([...multiSelected])}
-async function playerTick(force=false){try{const id=getSavedPlayerId();if(id&&!localStorage.getItem('mambo_player'))localStorage.setItem('mambo_player',id);if(!id){if(await recoverPlayer(true)){return playerTick(true)}playJoin();clearInterval(playerPoll);return}let s=await getState();let d=await playerData(id,s);const _between=Math.max(0,Number(d.se?.between_question_duration??10)),_localBreakAdvance=s.status==='running'&&((s.phase==='intermission'&&breakSecondsLeft(s)<=0)||(s.phase==='leaderboard'&&s.paused_phase==='pending_break'&&Number(s.paused_remaining)>0&&secSince(s.leaderboard_started_at||s.phase_started_at)>=_between));if(_localBreakAdvance){try{await advanceGame(s)}catch(e){console.warn('local intermission advance',e)}s=await getState();d=await playerData(id,s)}else{const _due=s.status==='running'&&((s.phase==='countdown'&&secSince(s.countdown_started_at||s.phase_started_at)>=COUNTDOWN)||(s.phase==='question'&&secSince(s.question_started_at)>=(d.se?.question_duration||60))||(s.phase==='reveal'&&secSince(s.reveal_started_at||s.phase_started_at)>=REVEAL)||(s.phase==='leaderboard'&&secSince(s.leaderboard_started_at||s.phase_started_at)>=_between)||(s.phase==='code_challenge'&&secSince(s.phase_started_at)>=90)||((s.phase==='code_challenge_won'||s.phase==='code_challenge_timeout')&&secSince(s.phase_started_at)>=15)||s.phase==='minigame'||s.phase==='minigame_result');if(_due){try{await rpc('mambo_quiz_advance_game',{})}catch(e){console.warn('server advance',e)}s=await getState();d=await playerData(id,s)}}const key=[d.p?.approval_status,s.phase,s.question_index,s.status,!!d.ans,d.p?.score,d.p?.speed_bonus].join('|');if(force||key!==playerKey){playerKey=key;await renderPlayer(s,d)}}catch(e){console.error(e)}}function startPlayer(){clearInterval(playerPoll);playerTick(true);playerPoll=setInterval(()=>playerTick(false),1000)}async function play(){const id=getSavedPlayerId();if(id){savePlayerId(id);startPlayer();return}if(await recoverPlayer(true)){startPlayer();return}playJoin()}
-let staffPoll=null;function staffLogin(){app.innerHTML=`<div class="phone"><div class="box"><div class="brand">LE MAMBO</div><h1>ESPACE STAFF</h1><input id="sc" class="input" type="password" inputmode="numeric" maxlength="6" placeholder="CODE STAFF"><button id="go" class="btn full">OUVRIR LE TABLEAU DE BORD</button><div id="sm" class="muted"></div></div></div>`;document.getElementById('go').onclick=()=>{if(document.getElementById('sc').value==='180319'){sessionStorage.setItem('mambo_staff','1');sessionStorage.setItem('mambo_staff_code',document.getElementById('sc').value);renderStaffShell()}else document.getElementById('sm').textContent='Code incorrect'}}
-async function staffData(){const s=await getState(),sid=s.current_session_id,[players,answers,se]=await Promise.all([db(`mambo_quiz_players?session_id=eq.${sid}&select=*&order=score.desc,joined_at.asc`),db(`mambo_quiz_answers?session_id=eq.${sid}&select=*`),getSession(s)]);return{s,players,answers,se}}
+async function submitAnswers(arr){if(answering)return;answering=true;try{const id=getSavedPlayerId();if(id&&!localStorage.getItem('mambo_player'))localStorage.setItem('mambo_player',id);const r=await rpc('mambo_quiz_submit_answers',{p_player:id,p_question:displayedPlayerRound?.state.question_index,p_answers:arr});if(Number(r)===-3)throw Error('Sélectionne exactement le bon nombre de réponses');await playerTick(true)}catch(e){toast(e.message)}finally{answering=false}}async function sendAnswer(i){return submitAnswers([i])}async function pickAnswer(i){if(answering)return;const q=displayedPlayerRound?.question;if(q?.question_type!=='multi')return sendAnswer(i);const k=multiSelected.indexOf(i);if(k>=0)multiSelected.splice(k,1);else if(multiSelected.length<2)multiSelected.push(i);else return toast('2 réponses maximum');document.querySelectorAll('.phoneAnswer').forEach((b,j)=>{const on=multiSelected.includes(j);b.style.outline=on?'3px solid #ffd45a':'';b.style.transform=on?'scale(1.02)':''});let v=document.getElementById('multiValidate');if(!v){v=document.createElement('button');v.id='multiValidate';v.className='btn green full';v.textContent='VALIDER MES 2 RÉPONSES';v.onclick=validateMulti;document.querySelector('.phoneAnswers')?.insertAdjacentElement('afterend',v)}v.disabled=multiSelected.length!==2}async function validateMulti(){if(multiSelected.length!==2)return toast('Sélectionne 2 réponses');await submitAnswers([...multiSelected])}
+let playerBusy=false,displayedPlayerRound=null;
+async function playerTick(force=false){
+  if(playerBusy)return;
+  playerBusy=true;
+  try{
+    const data=await getSnapshot(),{state:s,player:p,session:se,question:q,answer:ans}=data;
+    if(!p){
+      clearSavedPlayerId();
+      if(await recoverPlayer(true))return;
+      clearInterval(playerPoll);playJoin();return;
+    }
+    const key=[s.current_session_id,p.approval_status,s.phase,s.question_index,s.status,ans?.id,p.score,p.speed_bonus,p.eliminated,p.special_lives,s.updated_at].join('|');
+    if(force||key!==playerKey){displayedPlayerRound=data;await renderPlayer(s,{p,se,q,ans});playerKey=key}
+  }catch(e){console.error(e)}finally{playerBusy=false}
+}
+function startPlayer(){clearInterval(playerPoll);playerTick(true);playerPoll=setInterval(()=>playerTick(false),1300)}
+async function play(){if(getSavedPlayerId()||await recoverPlayer(true))startPlayer();else playJoin()}
+let staffPoll=null;function staffLogin(){app.innerHTML=`<div class="phone"><div class="box"><div class="brand">LE MAMBO</div><h1>ESPACE STAFF</h1><input id="sc" class="input" type="password" autocomplete="current-password" maxlength="128" placeholder="CODE STAFF"><button id="go" class="btn full">OUVRIR LE TABLEAU DE BORD</button><div id="sm" class="muted"></div></div></div>`;
+  document.getElementById('go').onclick=async()=>{
+    const button=document.getElementById('go'),input=document.getElementById('sc'),message=document.getElementById('sm');
+    button.disabled=true;
+    try{await quizApi('login',{password:input.value});renderStaffShell()}
+    catch(e){message.textContent=e.message;button.disabled=false}
+  };
+  document.getElementById('sc').onkeydown=e=>{if(e.key==='Enter')document.getElementById('go').click()};
+}
+async function staffData(){const s=await getState(),sid=s.current_session_id,[players,answers,se]=await Promise.all([db(`mambo_quiz_players?session_id=eq.${sid}&select=*&order=score.desc,joined_at.asc`),db(`mambo_quiz_answers?session_id=eq.${sid}&question_index=eq.${s.question_index}&select=question_index`),getSession(s)]);return{s,players,answers,se}}
 let staffActiveTab='dashboard';
 function staffTab(name){
   staffActiveTab=name;
@@ -633,7 +696,7 @@ function staffTab(name){
   if(h)h.textContent=t[0]; if(s)s.textContent=t[1];
   if(name==='history')loadStaffHistory();if(name==='display')setTimeout(loadStaffTvSlides,0);
 }
-function staffLogout(){sessionStorage.removeItem('mambo_staff');sessionStorage.removeItem('mambo_staff_code');clearInterval(staffPoll);staffLogin()}
+async function staffLogout(){try{await quizApi('logout',{});clearInterval(staffPoll);staffLogin()}catch(e){toast(e.message)}}
 function fmtStaffDate(v){if(!v)return'—';try{return new Date(v).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch{return'—'}}
 async function loadStaffHistory(){
   const el=document.getElementById('staffHistoryBody');if(!el)return;
@@ -738,12 +801,12 @@ function renderStaffShell(){clearInterval(staffPoll);app.innerHTML=`
         <div class="staffActionCard"><div class="staffActionIcon">🔄</div><h3>Actualiser le tableau de bord</h3><p class="muted">Recharge les données sans quitter l’espace staff.</p><button class="btn alt full" onclick="refreshStaff()">ACTUALISER</button></div>
         <div class="staffActionCard"><div class="staffActionIcon">🚪</div><h3>Déconnexion staff</h3><p class="muted">Ferme la session de gestion sur cet appareil.</p><button class="btn alt full" onclick="staffLogout()">SE DÉCONNECTER</button></div>
       </div>
-      <div class="staffActionCard staffDanger" style="margin-top:14px"><div class="staffActionIcon">⚠️</div><h3>Zone dangereuse</h3><p class="muted">Supprime joueurs, réponses, scores et remet la partie à zéro. Cette action demande confirmation.</p><button class="btn red" onclick="resetTotal()">RESET TOTAL PARTIE / SCORES</button></div>
+      <div class="staffActionCard staffDanger" style="margin-top:14px"><div class="staffActionIcon">⚠️</div><h3>Zone dangereuse</h3><p class="muted">Ouvre une nouvelle partie et conserve la précédente dans l’historique.</p><button class="btn red" onclick="resetTotal()">RESET TOTAL PARTIE / SCORES</button></div>
     </section>
   </main>
 </div>`;staffTab(staffActiveTab||'dashboard');refreshStaff();staffPoll=setInterval(refreshStaff,1800)}
 async function refreshStaff(){try{
-  let sd=await staffData();await advanceGame(sd.s);sd=await staffData();
+  const sd=await staffData();
   const{s,players,answers,se}=sd,ok=players.filter(p=>p.approval_status==='approved'),pd=players.filter(p=>p.approval_status==='pending');
   const phaseText=s.phase==='intermission'?'ENTRACTE • '+formatBreakTime(breakSecondsLeft(s)):(s.phase||'lobby').toUpperCase()+((s.paused_phase==='pending_break'&&Number(s.paused_remaining)>0)?' • ENTRACTE PROGRAMMÉ':'');
   const code=String(s.game_code||'----');
@@ -769,9 +832,9 @@ async function refreshStaff(){try{
   const d=document.getElementById('stApprovedList');if(d)d.innerHTML=approved;
   refreshMiniGameStaffStatus();
 }catch(e){console.error(e)}}
-async function playerAction(id,action){if(action==='approve')await db(`mambo_quiz_players?id=eq.${id}`,{method:'PATCH',body:{approval_status:'approved',approved_at:serverNowIso()}});if(action==='reject')await db(`mambo_quiz_players?id=eq.${id}`,{method:'PATCH',body:{approval_status:'rejected'}});if(action==='delete')await db(`mambo_quiz_players?id=eq.${id}`,{method:'DELETE'});toast('Joueur mis à jour');refreshStaff()}
+async function playerAction(id,action){if(action==='approve')await db(`mambo_quiz_players?id=eq.${id}`,{method:'PATCH',body:{approval_status:'approved',approved_at:serverNowIso()}});if(action==='reject')await db(`mambo_quiz_players?id=eq.${id}`,{method:'PATCH',body:{approval_status:'rejected'}});if(action==='delete')await db(`mambo_quiz_players?id=eq.${id}`,{method:'PATCH',body:{approval_status:'rejected'}});toast('Joueur mis à jour');refreshStaff()}
 function launchQuizSetup(){clearInterval(staffPoll);app.innerHTML=`<div class="page"><div class="staff"><div class="top"><div><div class="brand">LE MAMBO • STAFF</div><div class="muted">Préparation du quiz</div></div><button class="btn alt" onclick="renderStaffShell()">← RETOUR</button></div><div class="box" style="max-width:850px;margin:22px auto"><div class="label">Catégories</div><h1>CHOISIS LES CATÉGORIES</h1><div class="choice">${CATS.map(c=>`<label><input class="catpick" type="checkbox" value="${esc(c)}" checked> <b>${esc(c)}</b></label>`).join('')}</div><div style="margin-top:24px"><div class="label">Nombre de questions</div><div class="countpick">${COUNTS.map(n=>`<label><input type="radio" name="qcount" value="${n}" ${n===50?'checked':''}> ${n}</label>`).join('')}</div></div><div style="margin-top:24px"><div class="label">Temps de réponse par question</div><div class="countpick">${DURATIONS.map(n=>`<label><input type="radio" name="qduration" value="${n}" ${n===60?'checked':''}> ${n} s</label>`).join('')}</div></div><div style="margin-top:24px"><div class="label">Temps entre chaque question</div><input id="qbetween" class="input" type="number" inputmode="numeric" min="0" max="120" step="1" value="10" style="max-width:220px;text-align:center" aria-label="Temps entre chaque question en secondes"><div class="muted" style="font-size:13px;margin-top:5px">0 à 120 secondes • chrono complet après l’affichage de la bonne réponse</div></div><div style="margin-top:24px;padding:18px;border:1px solid #9b67ff55;border-radius:18px;background:#9b67ff0d"><div class="label">MODE DE POINTS</div><h2 style="margin:7px 0 10px">💸 PERTE DE POINTS</h2><label style="display:flex;align-items:center;gap:10px;font-weight:900"><input id="setupPenaltyEnabled" type="checkbox" onchange="document.getElementById('setupPenaltyWrap').style.display=this.checked?'block':'none'"> Activer une pénalité pour chaque mauvaise réponse</label><div id="setupPenaltyWrap" style="display:none;margin-top:14px"><div class="label">POINTS PERDUS PAR MAUVAISE RÉPONSE</div><input id="setupPenaltyPoints" class="input" type="number" inputmode="numeric" min="0" max="5000" step="50" value="200" style="max-width:240px;text-align:center"><div class="muted" style="font-size:13px;margin-top:6px">Cette pénalité s’appliquera à toutes les questions du quiz. Les bonnes réponses gardent leur calcul selon la rapidité.</div></div></div><div style="margin-top:24px"><div class="label">Lots du podium</div><h2 style="margin:7px 0 10px">LOTS POUR LES 3 PREMIERS</h2><input id="prize1" class="input" maxlength="80" placeholder="🥇 Lot du 1er — ex. 50 €"><input id="prize2" class="input" maxlength="80" placeholder="🥈 Lot du 2e — ex. Une bouteille"><input id="prize3" class="input" maxlength="80" placeholder="🥉 Lot du 3e — ex. 2 consommations"><div class="muted" style="font-size:13px;margin-top:5px">Les lots sont optionnels et seront attribués automatiquement selon le classement final.</div></div><button id="startConfigured" class="btn green full" style="margin-top:20px">CONFIRMER ET LANCER</button><div id="setupmsg" class="muted" style="margin-top:10px"></div></div></div></div>`;document.getElementById('startConfigured').onclick=startConfiguredQuiz}
-async function startConfiguredQuiz(){const btn=document.getElementById('startConfigured'),msg=document.getElementById('setupmsg');btn.disabled=true;try{const cats=[...document.querySelectorAll('.catpick:checked')].map(x=>x.value),count=Number(document.querySelector('input[name=qcount]:checked')?.value),duration=Number(document.querySelector('input[name=qduration]:checked')?.value),between=Math.min(120,Math.max(0,Number(document.getElementById('qbetween')?.value||10))),prize1=(document.getElementById('prize1')?.value||'').trim(),prize2=(document.getElementById('prize2')?.value||'').trim(),prize3=(document.getElementById('prize3')?.value||'').trim(),penaltyEnabled=!!document.getElementById('setupPenaltyEnabled')?.checked,penaltyPoints=Math.max(0,Math.min(5000,Number(document.getElementById('setupPenaltyPoints')?.value||200)));if(!cats.length)throw Error('Sélectionne au moins une catégorie');const s=await getState(),sid=s.current_session_id;let pool=[];for(const cat of cats){const rows=await db(`mambo_quiz_question_bank?active=eq.true&category=eq.${encodeURIComponent(cat)}&select=id,question_type`);pool.push(...rows.map(x=>({id:x.id,question_type:x.question_type||'single'})))}pool=[...new Map(pool.map(x=>[x.id,x])).values()];if(pool.length<count)throw Error(`Seulement ${pool.length} questions disponibles dans ce choix`);const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};let specials=shuffle(pool.filter(x=>['trap','multi','intruder'].includes(x.question_type))),normals=shuffle(pool.filter(x=>!['trap','multi','intruder'].includes(x.question_type))),chosen=[];for(let pos=0;pos<count;pos++){const wantSpecial=(pos+1)%5===0&&specials.length>0;let item=wantSpecial?specials.shift():normals.shift();if(!item)item=specials.shift()||normals.shift();if(item)chosen.push(item)}if(chosen.length<count)throw Error(`Seulement ${chosen.length} questions disponibles dans ce choix`);await db(`mambo_quiz_session_questions?session_id=eq.${sid}`,{method:'DELETE'});await db('mambo_quiz_session_questions',{method:'POST',body:chosen.map((x,position)=>({session_id:sid,position,question_id:x.id}))});const now=serverNowIso();await db(`mambo_quiz_sessions?id=eq.${sid}`,{method:'PATCH',body:{question_count:count,question_duration:duration,between_question_duration:between,prize_first:prize1||null,prize_second:prize2||null,prize_third:prize3||null,selected_categories:cats,status:'live',started_at:now,finished_at:null,winner_player_id:null,special_mode:penaltyEnabled?'point_penalty':'normal',pending_special_mode:null,special_mode_effective_question:0,special_question_indices:penaltyEnabled?Array.from({length:count},(_,i)=>i):[],penalty_points:penaltyPoints,penalize_no_answer:false,min_score_zero:false}});await patchState({status:'running',phase:'countdown',question_index:0,countdown_started_at:now,phase_started_at:now,question_started_at:null,reveal_started_at:null,leaderboard_started_at:null,final_started_at:null,winner_id:null,cancelled_question:false,leaderboard_hidden:false,speed_bonus_applied:false,speed_bonus_started_at:null});toast('Quiz lancé');renderStaffShell()}catch(e){msg.textContent=e.message;btn.disabled=false}}
+async function startConfiguredQuiz(){return window.wzLaunchFinal()}
 function breakSecondsLeft(s){const total=Math.max(0,Number(s?.paused_remaining||0)),start=s?.paused_at||s?.phase_started_at;return s?.phase==='intermission'&&start?Math.max(0,total-secSince(start)):total}
 function formatBreakTime(sec){sec=Math.max(0,Math.ceil(Number(sec)||0));const m=Math.floor(sec/60),s=sec%60;return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
 function closeIntermissionModal(){document.getElementById('breakModal')?.remove()}
@@ -780,62 +843,10 @@ async function confirmIntermission(){const sec=Math.max(60,Math.min(1800,Number(
 async function cancelIntermission(){const s=await getState();if(s.phase==='intermission')return endIntermissionNow();await patchState({paused_remaining:null,paused_phase:null,paused_at:null});closeIntermissionModal();toast('Entracte programmé annulé');refreshStaff()}
 async function endIntermissionNow(){const s=await getState();if(s.phase!=='intermission')return cancelIntermission();const se=await getSession(s),now=serverNowIso(),resumeSame=s.paused_phase==='resume_same',last=(s.question_index||0)+1>=(se?.question_count||0);if(resumeSame)await patchState({phase:'countdown',countdown_started_at:now,question_started_at:null,reveal_started_at:null,leaderboard_started_at:null,leaderboard_hidden:false,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.intermission');else if(last)await patchState({phase:'leaderboard',leaderboard_started_at:now,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.intermission');else await patchState({question_index:(s.question_index||0)+1,phase:'countdown',countdown_started_at:now,question_started_at:null,reveal_started_at:null,leaderboard_started_at:null,leaderboard_hidden:false,phase_started_at:now,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.intermission');closeIntermissionModal();toast('Reprise du quiz');refreshStaff()}
 async function stopQuiz(){await rpc('mambo_quiz_stop_game',{});await patchState({paused_remaining:null,paused_phase:null,paused_at:null});toast('Quiz arrêté');refreshStaff()}
-let resetTotalInProgress=false;
 async function resetTotal(){
-  if(resetTotalInProgress)return;
-  if(!confirm('RESET TOTAL : supprimer tous les joueurs, réponses, scores et classements ?'))return;
-  resetTotalInProgress=true;
-  clearInterval(staffPoll);
-  const button=document.querySelector('.staffDanger button');
-  if(button){button.disabled=true;button.textContent='RÉINITIALISATION EN COURS…'}
-  let completed=false;
-  try{
-    const s=await getState();
-    if(!s)throw Error('État du quiz introuvable');
-    const code=String(Math.floor(Math.random()*10000)).padStart(4,'0');
-    // Libérer toutes les références aux joueurs AVANT leur suppression.
-    // Les sessions précédentes peuvent encore pointer vers un gagnant.
-    await db('mambo_quiz_sessions?id=not.is.null',{method:'PATCH',body:{
-      winner_player_id:null,special_winner_id:null,challenge_winner_id:null,
-      weakest_link_last_player_id:null
-    }});
-    await patchState({winner_id:null,tiebreaker_ids:null});
-    // Les tentatives du mini-jeu sont supprimées automatiquement par la contrainte ON DELETE CASCADE des joueurs.
-    // En cas d'erreur réseau, recommencer les suppressions : elles sont idempotentes.
-    // Vérifier ensuite le résultat en base avant d'annoncer la réussite.
-    for(let attempt=1;attempt<=3;attempt++){
-      await db('mambo_quiz_answers?id=not.is.null',{method:'DELETE'});
-      await db('mambo_quiz_players?id=not.is.null',{method:'DELETE'});
-      const [answers,players]=await Promise.all([
-        db('mambo_quiz_answers?select=id&limit=1'),
-        db('mambo_quiz_players?select=id&limit=1')
-      ]);
-      if(!answers?.length&&!players?.length)break;
-      if(attempt===3)throw Error('Des joueurs ou des réponses sont encore présents en base');
-    }
-    if(s.current_session_id){
-      await db(`mambo_quiz_session_questions?session_id=eq.${s.current_session_id}`,{method:'DELETE'});
-      await db(`mambo_quiz_sessions?id=eq.${s.current_session_id}`,{method:'PATCH',body:{status:'open',game_code:code,started_at:null,finished_at:null,winner_player_id:null,question_count:50,selected_categories:null,prize_first:null,prize_second:null,prize_third:null,challenge_enabled:false,challenge_location:null,challenge_points:200,challenge_after_question:null,challenge_winner_id:null,challenge_won_at:null}});
-      const remaining=await db(`mambo_quiz_session_questions?session_id=eq.${s.current_session_id}&select=question_id&limit=1`);
-      if(remaining?.length)throw Error('Les questions de la session précédente sont encore présentes');
-    }
-    await patchState({game_code:code,status:'waiting',phase:'lobby',question_index:0,question_started_at:null,countdown_started_at:null,reveal_started_at:null,leaderboard_started_at:null,final_started_at:null,phase_started_at:null,winner_id:null,leaderboard_hidden:false,cancelled_question:false,tiebreaker_ids:null,tiebreak_started_at:null,speed_bonus_started_at:null,speed_bonus_applied:false,paused_remaining:null,paused_phase:null,paused_at:null});
-    const verified=await getState();
-    if(!verified||verified.phase!=='lobby'||verified.status!=='waiting'||verified.game_code!==code)throw Error('La remise à zéro de la partie n’a pas été confirmée');
-    completed=true;
-    toast('Partie réinitialisée : joueurs, réponses et scores supprimés');
-  }catch(error){
-    console.error('Échec de réinitialisation BUZZQUIZ',error);
-    alert('Réinitialisation incomplète : '+(error?.message||'erreur inconnue')+'. Vérifiez la connexion puis relancez le reset.');
-  }finally{
-    resetTotalInProgress=false;
-    if(completed)renderStaffShell();
-    else{
-      if(button){button.disabled=false;button.textContent='RESET TOTAL PARTIE / SCORES'}
-      staffPoll=setInterval(refreshStaff,1800);
-      refreshStaff().catch(console.warn);
-    }
-  }
+  if(!confirm('Ouvrir une nouvelle partie ? La partie précédente reste dans l’historique.'))return;
+  try{await quizApi('reset',{});toast('Nouvelle partie ouverte');renderStaffShell()}
+  catch(e){toast(e.message)}
 }
 /* MAMBO STAFF WIZARD V6 — injected into the existing stable quiz engine */
 const WZ_EXTRA_CATS=['APÉRO','CINÉMA & SÉRIES','TÉLÉ & DIVERTISSEMENT','ANNÉES 80 / 90 / 2000','INTERNET & RÉSEAUX SOCIAUX','JEUX VIDÉO','FOOD & BOISSONS','PEOPLE & CÉLÉBRITÉS','FRANCE & CULTURE FRANÇAISE','MONDE DE LA NUIT','MARQUES & LOGOS','QUI A DIT ÇA ?','DEVINE LE FILM / LA SÉRIE','QUESTION WTF / INSOLITE','ACTUALITÉ POP CULTURE','LE MAMBO'];
@@ -874,7 +885,6 @@ window.wzCatChange=function(el){const c=el.value;if(el.checked){if(!WZ_CFG.selec
 window.wzPickDuration=function(n){wzCapture();WZ_CFG.duration=Number(n);wzRender()};
 window.wzNext=function(){wzCapture();if(WZ_CFG.step===1&&wzSelectedAvailable().length===0)return toast('Sélectionne au moins une catégorie');WZ_CFG.step=Math.min(5,WZ_CFG.step+1);wzNormalizeCount();wzRender()};
 window.wzPrev=function(){wzCapture();WZ_CFG.step=Math.max(1,WZ_CFG.step-1);wzRender()};
-window.wzLaunchFinal=async function(){wzCapture();const cats=wzSelectedAvailable();if(!cats.length)return toast('Aucune catégorie sélectionnée');wzShell(`<div style="text-align:center;padding:30px"><h1>🚀 PRÉPARATION DU QUIZ</h1><p class="muted">Sélection des questions sur le serveur…</p><div id="wzLaunchMsg" class="muted" style="margin-top:12px"></div></div>`);const msg=document.getElementById('wzLaunchMsg');try{const s=await getState(),sid=s?.current_session_id;if(!sid)throw Error('Aucune session active');if(msg)msg.textContent='Création de la partie…';await rpc('mambo_quiz_prepare_session_fast',{p_session:sid,p_count:WZ_CFG.count,p_duration:WZ_CFG.duration,p_between:WZ_CFG.between,p_categories:cats,p_prize_first:WZ_CFG.prize1||null,p_prize_second:WZ_CFG.prize2||null,p_prize_third:WZ_CFG.prize3||null});toast('Quiz lancé ✅');renderStaffShell()}catch(e){console.error(e);if(msg)msg.textContent=e?.name==='AbortError'?'Connexion trop lente — réessaie une fois.':(e.message||String(e));else toast(e.message||String(e))}};
 function wzRender(){if(WZ_CFG.step===1){const grouped=new Set(WZ_GROUPS.flatMap(g=>g.cats)),groups=[...WZ_GROUPS],rest=WZ_ALL.filter(c=>!grouped.has(c));if(rest.length)groups.push({name:'📚 AUTRES',cats:rest});wzShell(`<div class="label">ÉTAPE 1</div><h1 class="wz-title">CHOISIS LES CATÉGORIES</h1><p class="muted">Les catégories sont rangées dans des menus repliables.</p><div class="wz-toolbar"><button class="btn green" onclick="wzToggleAll(true)">TOUT SÉLECTIONNER</button><button class="btn alt" onclick="wzToggleAll(false)">TOUT DÉSÉLECTIONNER</button></div><div class="pill" style="display:inline-block"><span id="wzSelCount">${WZ_CFG.selected.length} sélectionnée${WZ_CFG.selected.length>1?'s':''}</span></div>${groups.map((g,gi)=>{const items=g.cats.filter(c=>WZ_ALL.includes(c)),active=items.filter(c=>(WZ_CFG.counts[c]||0)>0).length;return `<details class="wz-group" ${gi===0?'open':''}><summary>${g.name}<span class="muted">${active}/${items.length} disponibles ▾</span></summary><div class="wz-catgrid">${items.map(c=>{const n=WZ_CFG.counts[c]||0,off=n===0,checked=WZ_CFG.selected.includes(c);return `<label class="wz-cat ${off?'off':''}"><input type="checkbox" value="${esc(c)}" ${checked?'checked':''} ${off?'disabled':''} onchange="wzCatChange(this)"><b>${esc(c)}</b><span class="wz-count">${off?'BIENTÔT':n>=1000?'1000+ questions':n+' question'+(n>1?'s':'')}</span></label>`}).join('')}</div></details>`}).join('')}<div class="wz-nav"><button class="btn green" onclick="wzNext()">SUIVANT →</button></div>`);return}if(WZ_CFG.step===2){wzNormalizeCount();const opts=wzQuestionOptions();wzShell(`<div class="label">ÉTAPE 2</div><h1 class="wz-title">NOMBRE DE QUESTIONS</h1><div class="wz-info"><b>${wzAvailableTotal()} questions</b> disponibles dans les catégories sélectionnées.</div><select id="wzCount" class="wz-select">${opts.map(n=>`<option value="${n}" ${n===WZ_CFG.count?'selected':''}>${n} QUESTIONS</option>`).join('')}</select><div class="wz-nav"><button class="btn alt" onclick="wzPrev()">← PRÉCÉDENT</button><button class="btn green" onclick="wzNext()">SUIVANT →</button></div>`);return}if(WZ_CFG.step===3){wzShell(`<div class="label">ÉTAPE 3</div><h1 class="wz-title">TEMPS DE JEU</h1><p class="muted">Temps laissé pour répondre à chaque question.</p><div class="wz-choicegrid">${[10,20,30,45,60,90].map(n=>`<button class="wz-choice ${WZ_CFG.duration===n?'on':''}" onclick="wzPickDuration(${n})">${n} s</button>`).join('')}</div><div style="margin-top:22px"><div class="label">TEMPS ENTRE LES QUESTIONS</div><input id="wzBetween" class="input" type="number" inputmode="numeric" min="0" max="120" value="${WZ_CFG.between}" style="max-width:250px"><p class="muted">0 à 120 secondes.</p></div><div style="margin-top:22px;padding:18px;border:2px solid #ff4d6d;border-radius:16px;background:#ff4d6d12"><div class="label">MODE ÉLIMINATION</div><h2>🔗 MANCHE MAILLON FAIBLE</h2><label class="wz-cat"><input id="wzWeakestLinkEnabled" type="checkbox" ${WZ_CFG.weakestLinkEnabled?'checked':''} onchange="WZ_CFG.weakestLinkEnabled=this.checked"><b>ÉLIMINER LE DERNIER JOUEUR À INTERVALLE RÉGULIER</b></label><div style="margin-top:14px"><div class="label">NOMBRE DE QUESTIONS ENTRE CHAQUE ÉLIMINATION</div><input id="wzWeakestLinkInterval" class="input" type="number" inputmode="numeric" min="1" max="100" step="1" value="${WZ_CFG.weakestLinkInterval||15}" style="max-width:250px" aria-label="Intervalle entre les éliminations"><p class="muted">De 1 à 100 questions. Exemple : 5 = élimination après les questions 5, 10, 15…</p></div><p class="muted">Après chaque intervalle choisi, le joueur encore en jeu ayant le moins de points est éliminé. Les scores restent cumulés. En cas d’égalité, le dernier inscrit est éliminé. Le dernier survivant gagne.</p></div><div style="margin-top:22px;padding:18px;border:2px solid #9b67ff;border-radius:16px;background:#9b67ff12"><div class="label">MODE DE POINTS</div><h2 style="margin:7px 0 12px">💸 PERTE DE POINTS</h2><label class="wz-cat"><input id="wzPenaltyEnabled" type="checkbox" ${WZ_CFG.penaltyEnabled?'checked':''} onchange="WZ_CFG.penaltyEnabled=this.checked;document.getElementById('wzPenaltyWrap').style.display=this.checked?'block':'none'"><b>RETIRER DES POINTS À CHAQUE MAUVAISE RÉPONSE</b></label><div id="wzPenaltyWrap" style="display:${WZ_CFG.penaltyEnabled?'block':'none'};margin-top:14px"><div class="label">POINTS PERDUS PAR ERREUR</div><input id="wzPenaltyPoints" class="input" type="number" min="0" max="5000" step="50" value="${WZ_CFG.penaltyPoints}" style="max-width:250px"><p class="muted">La pénalité s'applique à TOUTES les questions. Une absence de réponse ne retire aucun point.</p></div></div><div class="wz-nav"><button class="btn alt" onclick="wzPrev()">← PRÉCÉDENT</button><button class="btn green" onclick="wzNext()">SUIVANT →</button></div>`);return}if(WZ_CFG.step===4){wzShell(`<div class="label">ÉTAPE 4</div><h1 class="wz-title">LOTS DU PODIUM</h1><p class="muted">Facultatif : laisse vide si aucun lot n'est prévu.</p><input id="wzPrize1" class="input" maxlength="80" value="${esc(WZ_CFG.prize1)}" placeholder="🥇 1er — ex. 50 €"><input id="wzPrize2" class="input" maxlength="80" value="${esc(WZ_CFG.prize2)}" placeholder="🥈 2e — ex. 1 conso"><input id="wzPrize3" class="input" maxlength="80" value="${esc(WZ_CFG.prize3)}" placeholder="🥉 3e — ex. 1 shooter"><div class="wz-nav"><button class="btn alt" onclick="wzPrev()">← PRÉCÉDENT</button><button class="btn green" onclick="wzNext()">SUIVANT →</button></div>`);return}const cats=wzSelectedAvailable(),mins=Math.max(1,Math.round(WZ_CFG.count*(WZ_CFG.duration+8+WZ_CFG.between)/60));wzShell(`<div class="label">ÉTAPE 5</div><h1 class="wz-title">RÉCAPITULATIF</h1><p class="muted">Vérifie les réglages avant de lancer la partie.</p><div class="wz-summary"><div class="row"><b>Catégories</b><b>${cats.length}</b></div><div>${cats.map(c=>`<span class="wz-chip">${esc(c)}</span>`).join('')}</div><div class="row"><b>Questions</b><b>${WZ_CFG.count}</b></div><div class="row"><b>Temps / question</b><b>${WZ_CFG.duration} s</b></div><div class="row"><b>Entre les questions</b><b>${WZ_CFG.between} s</b></div><div class="row"><b>Alternance</b><b>${cats.length>1?'✅ Jamais 2 fois la même catégorie':'1 seule catégorie'}</b></div><div class="row"><b>Durée estimée</b><b>≈ ${mins} min</b></div>${WZ_CFG.prize1?`<div class="row"><b>🥇 1er</b><b>${esc(WZ_CFG.prize1)}</b></div>`:''}${WZ_CFG.prize2?`<div class="row"><b>🥈 2e</b><b>${esc(WZ_CFG.prize2)}</b></div>`:''}${WZ_CFG.prize3?`<div class="row"><b>🥉 3e</b><b>${esc(WZ_CFG.prize3)}</b></div>`:''}</div><div class="wz-nav"><button class="btn alt" onclick="wzPrev()">← PRÉCÉDENT</button><button class="btn green" onclick="wzLaunchFinal()">🚀 LANCER LE QUIZ</button></div>`)}
 window.wzRender=wzRender;
 
@@ -942,30 +952,6 @@ updateTVClockNow=function(s,se){
     const e=document.getElementById('tvChallengeNext');
     if(e)e.textContent=Math.max(0,Math.ceil(challengeSecondsLeft(s)));
   }
-};
-
-// TV/local state engine: challenge starts after the chosen correction and winner screen lasts exactly 15s.
-const _advanceGameBeforeCodeChallenge=advanceGame;
-advanceGame=async function(s){
-  if(!s)return;
-  const now=serverNowIso();
-  if(s.status==='running'&&s.phase==='reveal'&&secSince(s.reveal_started_at||s.phase_started_at)>=REVEAL){
-    const se=await getSession(s);
-    const trigger=!!se?.challenge_enabled&&!se?.challenge_winner_id&&Number(se?.challenge_after_question)===(Number(s.question_index||0)+1)&&(Number(s.question_index||0)+1)<Number(se?.question_count||0);
-    if(trigger){
-      await patchState({phase:'code_challenge',phase_started_at:now,leaderboard_started_at:null,leaderboard_hidden:true,paused_remaining:null,paused_phase:null,paused_at:null},'&phase=eq.reveal');
-      return;
-    }
-  }
-  if(s.status==='running'&&s.phase==='code_challenge'){
-    if(secSince(s.phase_started_at)>=90)await rpc('mambo_quiz_advance_game',{});
-    return;
-  }
-  if(s.status==='running'&&(s.phase==='code_challenge_won'||s.phase==='code_challenge_timeout')){
-    if(secSince(s.phase_started_at)>=15)await rpc('mambo_quiz_advance_game',{});
-    return;
-  }
-  return _advanceGameBeforeCodeChallenge(s);
 };
 
 // Player: code entry and winner countdown.
@@ -1072,14 +1058,12 @@ window.wzLaunchFinal=async function(){
   wzShell('<div style="text-align:center;padding:30px"><h1>🚀 PRÉPARATION DU QUIZ</h1><p class="muted">Sélection des questions et préparation du mini-jeu…</p><div id="wzLaunchMsg" class="muted" style="margin-top:12px"></div></div>');
   const msg=document.getElementById('wzLaunchMsg');
   try{
-    const s=await getState(),sid=s?.current_session_id;if(!sid)throw Error('Aucune session active');
-    const staffCode=staffWriteCode();if(!staffCode)throw Error('Code staff requis');
-    const staffOk=await rpc('mambo_quiz_verify_staff_code',{p_code:staffCode});
-    if(!staffOk){sessionStorage.removeItem('mambo_staff_code');throw Error('Code staff incorrect')}
     if(msg)msg.textContent='Création de la partie…';
-    await rpc('mambo_quiz_prepare_session_fast',{p_session:sid,p_count:WZ_CFG.count,p_duration:WZ_CFG.duration,p_between:WZ_CFG.between,p_categories:cats,p_prize_first:WZ_CFG.prize1||null,p_prize_second:WZ_CFG.prize2||null,p_prize_third:WZ_CFG.prize3||null});await db('mambo_quiz_sessions?id=eq.'+sid,{method:'PATCH',body:{weakest_link_enabled:!!WZ_CFG.weakestLinkEnabled,weakest_link_interval:WZ_CFG.weakestLinkInterval||15,weakest_link_last_question:null,weakest_link_last_player_id:null,special_winner_id:null,special_winner_at:null,special_mode:WZ_CFG.penaltyEnabled?'point_penalty':'normal',pending_special_mode:null,special_mode_effective_question:0,special_question_indices:WZ_CFG.penaltyEnabled?Array.from({length:WZ_CFG.count},(_,i)=>i):[],penalty_points:WZ_CFG.penaltyPoints||200,penalize_no_answer:false,min_score_zero:false}});
-    if(msg)msg.textContent=WZ_CFG.challengeEnabled?'Configuration du défi code secret…':'Finalisation…';
-    await rpc('mambo_quiz_configure_code_challenge',{p_staff_code:staffCode,p_session:sid,p_enabled:!!WZ_CFG.challengeEnabled,p_code:WZ_CFG.challengeEnabled?WZ_CFG.challengeCode:null,p_location:WZ_CFG.challengeEnabled?WZ_CFG.challengeLocation:null,p_points:WZ_CFG.challengePoints||200,p_after_question:WZ_CFG.challengeEnabled?WZ_CFG.challengeAfter:null});
+    await quizApi('start',{
+      setup:{p_count:WZ_CFG.count,p_duration:WZ_CFG.duration,p_between:WZ_CFG.between,p_categories:cats,p_prize_first:WZ_CFG.prize1||null,p_prize_second:WZ_CFG.prize2||null,p_prize_third:WZ_CFG.prize3||null},
+      settings:{weakest_link_enabled:!!WZ_CFG.weakestLinkEnabled,weakest_link_interval:WZ_CFG.weakestLinkInterval||15,special_mode:WZ_CFG.penaltyEnabled?'point_penalty':'normal',special_mode_effective_question:0,special_question_indices:WZ_CFG.penaltyEnabled?Array.from({length:WZ_CFG.count},(_,i)=>i):[],penalty_points:WZ_CFG.penaltyPoints||200,penalize_no_answer:false,min_score_zero:false},
+      challenge:{p_enabled:!!WZ_CFG.challengeEnabled,p_code:WZ_CFG.challengeCode||null,p_location:WZ_CFG.challengeLocation||null,p_points:WZ_CFG.challengePoints||200,p_after_question:WZ_CFG.challengeEnabled?WZ_CFG.challengeAfter:null}
+    });
     toast('Quiz lancé ✅');renderStaffShell();
   }catch(e){
     console.error(e);
@@ -1142,11 +1126,6 @@ async function queueMiniGame(type){
   const modal=document.querySelector('#mgOverlay .mgModal');
   const x=mgInfo(type);
   try{
-    const code=staffWriteCode();
-    if(!code){
-      if(modal)modal.innerHTML='<div style="text-align:center;padding:28px"><div style="font-size:64px">⚠️</div><h2>CODE STAFF REQUIS</h2><button class="btn alt" onclick="openMiniGamePicker()">RETOUR</button></div>';
-      return;
-    }
     const pts=Math.max(1,Math.min(20000,Number(document.getElementById('mgPoints')?.value||x.points)));
     const secret=(document.getElementById('mgCode')?.value||'').trim();
     const location=(document.getElementById('mgLocation')?.value||'').trim();
@@ -1154,7 +1133,6 @@ async function queueMiniGame(type){
     if(modal)modal.innerHTML='<div style="text-align:center;padding:30px"><div style="font-size:68px">⏳</div><h2>PROGRAMMATION…</h2><p class="muted">'+x.icon+' '+x.title+'</p></div>';
 
     const r=await rpc('mambo_quiz_minigame_queue',{
-      p_staff_code:code,
       p_game_type:type,
       p_points:pts,
       p_code:secret||null,
@@ -1325,13 +1303,6 @@ startPlayerClock=function(s,se){
   if(s?.phase==='minigame'||s?.phase==='minigame_result'){
     clearInterval(window._pclock);const upd=function(){updateMiniGamePlayerClock(s)};upd();window._pclock=setInterval(upd,100);
   }
-};
-const _advanceGameBeforeOnDemandMiniGame=advanceGame;
-advanceGame=async function(s){
-  if(!s)return;
-  if(s.status==='running'&&s.phase==='reveal'&&secSince(s.reveal_started_at||s.phase_started_at)>=REVEAL){await rpc('mambo_quiz_advance_game',{});return}
-  if(s.status==='running'&&(s.phase==='minigame'||s.phase==='minigame_result')){await rpc('mambo_quiz_advance_game',{});return}
-  return _advanceGameBeforeOnDemandMiniGame(s);
 };
 const _renderTVBeforeV10=renderTV;
 renderTV=async function(s){
@@ -1566,5 +1537,12 @@ async function checkAppBuild(){
     }
   }catch(e){}
 }
-(()=>{if(mode==='play')play();else if(mode==='staff'){sessionStorage.getItem('mambo_staff')==='1'?renderStaffShell():staffLogin()}else tv();syncServerClock();setInterval(syncServerClock,30000);setTimeout(checkAppBuild,2500);setInterval(checkAppBuild,15000)})();
+(async()=>{
+  if(mode==='play')await play();
+  else if(mode==='staff'){
+    sessionStorage.removeItem('mambo_staff');sessionStorage.removeItem('mambo_staff_code');
+    try{(await quizApi('staff'))?renderStaffShell():staffLogin()}catch(e){staffLogin();toast(e.message)}
+  }else await tv();
+  setTimeout(checkAppBuild,2500);setInterval(checkAppBuild,15000);
+})();
 </script><!-- BuzzQuiz question sources 20261014 --><script>if(new URLSearchParams(location.search).get('mode')==='staff'){const credit=document.createElement('a');credit.href='sources-questions.html';credit.textContent='Sources des questions';credit.style.cssText='position:fixed;bottom:7px;right:14px;font:11px system-ui;color:#b7bac6;z-index:200;text-decoration:underline';document.body.appendChild(credit);}</script></body></html>
